@@ -61,16 +61,16 @@ public class DosSend {
         long nbBytes = taille * CHANNELS * FMT / 8;
 
         try  {
-            // Bytes positions in the header in the comments above the commands
+            // ? Bytes positions of the header in the comments above the commands
             // 1-4 | # 0-3 /* Marks the file as a riff file. Characters are each 1 byte long. */
             outStream.write(new byte[]{'R', 'I', 'F', 'F'});
-            // 5-8 | # 4-7 /* Size of the overall file - 8 bytes, in bytes (32-bit integer). */
+            // 5-8 | # 4-7 /*  Size of the overall file - 8 bytes, in bytes (32-bit integer). */
             outStream.write(
                 new byte[]{
                     (byte) (taille & 0xFF), // Masks the higher bits of the integer, only keeps the lowest 8 bits.
-                    (byte) ((taille >> 8) & 0xFF), // Shifts the bits of the integer taille 8 bits to the right. Masks the higher bits of the integer.
-                    (byte) ((taille >> 16) & 0xFF), // Shifts the bits of the integer taille 16 bits to the right. Masks the higher bits of the integer.
-                    (byte) ((taille >> 24) & 0xFF) // Shifts the bits of the integer taille 24 bits to the right. Masks the higher bits of the integer.
+                    (byte) ((taille >> 8) & 0xFF), // Shifts the bits of the integer 8 bits to the right. Masks the higher bits of the integer.
+                    (byte) ((taille >> 16) & 0xFF), // Shifts the bits of the integer 16 bits to the right. Masks the higher bits of the integer.
+                    (byte) ((taille >> 24) & 0xFF) // Shifts the bits of the integer 24 bits to the right. Masks the higher bits of the integer.
                 }
             ); 
             // 9-12 | # 8-B /* File Type Header. For our purposes, it always equals "WAVE". */
@@ -78,7 +78,7 @@ public class DosSend {
             // 13-16 | # C-F /* Format chunk marker. Includes trailing null */ 
             outStream.write(new byte[]{'f', 'm', 't', ' '});
             // 17-20 | # 10-13 /* Length of format data - 16 */
-            outStream.write(new byte[]{FMT, 0, 0, 0}); // ! Not OK
+            outStream.write(new byte[]{FMT, 0, 0, 0});
             // 21-22 | # 14-15 /* Type of format (1 is PCM) - 2 byte integer */
             outStream.write(new byte[]{1, 0});
             // 23-24 | # 16-17 /* Number of Channels - 2 byte integer */
@@ -86,20 +86,31 @@ public class DosSend {
             // 25-28 | # 18-1B /* Sample Rate - 32 byte integer. */
             outStream.write(new byte[]{
                 (byte) (FECH & 0xFF), // Masks the higher bits of the integer, only keeps the lowest 8 bits.
-                (byte) ((FECH >> 8) & 0xFF), // Shifts the bits of the integer taille 8 bits to the right. Masks the higher bits of the integer.
-                (byte) ((FECH >> 16) & 0xFF), // Shifts the bits of the integer taille 16 bits to the right. Masks the higher bits of the integer.
-                (byte) ((FECH >> 24) & 0xFF) // Shifts the bits of the integer taille 24 bits to the right. Masks the higher bits of the integer.
-            });
+                (byte) ((FECH >> 8) & 0xFF), // Shifts the bits of the integer 8 bits to the right. Masks the higher bits of the integer.
+                (byte) ((FECH >> 16) & 0xFF), // Shifts the bits of the integer 16 bits to the right. Masks the higher bits of the integer.
+                (byte) ((FECH >> 24) & 0xFF) // Shifts the bits of the integer 24 bits to the right. Masks the higher bits of the integer.
+                } 
+            );
             // 29-32 | # 1C-1F /* (Sample Rate * BitsPerSample * Channels) / 8. */
-            outStream.write(new byte[]{0, 0 ,0 ,0}); // ! Not OK
+            outStream.write(new byte[]{
+                (byte) (FECH * FMT * CHANNELS / 8 & 0xFF), // Masks the higher bits of the integer, only keeps the lowest 8 bits.
+                (byte) ((FECH * FMT * CHANNELS / 8 >> 8) & 0xFF), // Shifts the bits of the integer 8 bits to the right. Masks the higher bits of the integer.
+                (byte) ((FECH * FMT * CHANNELS / 8 >> 16) & 0xFF), // Shifts the bits of the integer 16 bits to the right. Masks the higher bits of the integer.
+                (byte) ((FECH * FMT * CHANNELS / 8 >> 24) & 0xFF) // Shifts the bits of the integer 24 bits to the right. Masks the higher bits of the integer.
+            });
             // 33-34 | # 20-21 /* (BitsPerSample * Channels) / 8.1 - 8 bit mono2 - 8 bit stereo/16 bit mono4 - 16 bit stereo */
-            outStream.write(new byte[]{CHANNELS * FMT / 8, 0});  // ! Not OK
+            outStream.write(new byte[]{CHANNELS * FMT / 8, 0});
             // 35-36 | # 22-23 /* Bits per sample */
-            outStream.write(new byte[]{FMT, 0}); // ! Not OK
+            outStream.write(new byte[]{FMT, 0});
             // 37-40 | # 24-27 /* "data" chunk header. Marks the beginning of the data section. */
             outStream.write(new byte[]{'d', 'a', 't', 'a'}); 
             // 41-44 | # 28-2B /* Size of the data section. */
-            outStream.write(new byte[]{0, 0 ,0 ,0}); // ! Not OK
+            outStream.write(new byte[]{
+                (byte) (nbBytes & 0xFF), // Masks the higher bits of the integer, only keeps the lowest 8 bits.
+                (byte) ((nbBytes >> 8) & 0xFF), // Shifts the bits of the integer 8 bits to the right. Masks the higher bits of the integer.
+                (byte) ((nbBytes >> 16) & 0xFF), // Shifts the bits of the integer 16 bits to the right. Masks the higher bits of the integer.
+                (byte) ((nbBytes >> 24) & 0xFF) // Shifts the bits of the integer 24 bits to the right. Masks the higher bits of the integer.
+            });
 
         } catch(Exception e){
             System.out.printf(e.toString());
