@@ -3,6 +3,8 @@ import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Scanner;
 
+import java.util.Arrays; // ! A enlever avant rendu
+
 public class DosSend {
     final int FECH = 44100; // fréquence d'échantillonnage
     final int FP = 1000;    // fréquence de la porteuses
@@ -16,7 +18,7 @@ public class DosSend {
     long taille;                // nombre d'octets de données à transmettre
     double duree ;              // durée de l'audio
     double[] dataMod;           // données modulées
-    char[] dataChar;            // données en char
+    static char[] dataChar;            // données en char
     FileOutputStream outStream; // flux de sortie pour le fichier .wav
 
 
@@ -56,7 +58,7 @@ public class DosSend {
      * Create and write the header of a wav file
      *
      */
-    public void writeWavHeader(){ // ! En cours de modification
+    public void writeWavHeader(){
         taille = (long)(FECH * duree);
         long nbBytes = taille * CHANNELS * FMT / 8;
 
@@ -65,14 +67,8 @@ public class DosSend {
             // 1-4 | # 0-3 /* Marks the file as a riff file. Characters are each 1 byte long. */
             outStream.write(new byte[]{'R', 'I', 'F', 'F'});
             // 5-8 | # 4-7 /*  Size of the overall file - 8 bytes, in bytes (32-bit integer). */
-            outStream.write(
-                new byte[]{
-                    (byte) (taille & 0xFF), // Masks the higher bits of the integer, only keeps the lowest 8 bits.
-                    (byte) ((taille >> 8) & 0xFF), // Shifts the bits of the integer 8 bits to the right. Masks the higher bits of the integer.
-                    (byte) ((taille >> 16) & 0xFF), // Shifts the bits of the integer 16 bits to the right. Masks the higher bits of the integer.
-                    (byte) ((taille >> 24) & 0xFF) // Shifts the bits of the integer 24 bits to the right. Masks the higher bits of the integer.
-                }
-            ); 
+            // bit depth * sample rate * duration of audio * number of channels
+            writeLittleEndian((int)(nbBytes), 4, outStream);
             // 9-12 | # 8-B /* File Type Header. For our purposes, it always equals "WAVE". */
             outStream.write(new byte[]{'W', 'A', 'V', 'E'});
             // 13-16 | # C-F /* Format chunk marker. Includes trailing null */ 
@@ -84,20 +80,9 @@ public class DosSend {
             // 23-24 | # 16-17 /* Number of Channels - 2 byte integer */
             outStream.write(new byte[]{CHANNELS, 0});
             // 25-28 | # 18-1B /* Sample Rate - 32 byte integer. */
-            outStream.write(new byte[]{
-                (byte) (FECH & 0xFF), // Masks the higher bits of the integer, only keeps the lowest 8 bits.
-                (byte) ((FECH >> 8) & 0xFF), // Shifts the bits of the integer 8 bits to the right. Masks the higher bits of the integer.
-                (byte) ((FECH >> 16) & 0xFF), // Shifts the bits of the integer 16 bits to the right. Masks the higher bits of the integer.
-                (byte) ((FECH >> 24) & 0xFF) // Shifts the bits of the integer 24 bits to the right. Masks the higher bits of the integer.
-                } 
-            );
+            writeLittleEndian(FECH, 4, outStream);
             // 29-32 | # 1C-1F /* (Sample Rate * BitsPerSample * Channels) / 8. */
-            outStream.write(new byte[]{
-                (byte) (FECH * FMT * CHANNELS / 8 & 0xFF), // Masks the higher bits of the integer, only keeps the lowest 8 bits.
-                (byte) ((FECH * FMT * CHANNELS / 8 >> 8) & 0xFF), // Shifts the bits of the integer 8 bits to the right. Masks the higher bits of the integer.
-                (byte) ((FECH * FMT * CHANNELS / 8 >> 16) & 0xFF), // Shifts the bits of the integer 16 bits to the right. Masks the higher bits of the integer.
-                (byte) ((FECH * FMT * CHANNELS / 8 >> 24) & 0xFF) // Shifts the bits of the integer 24 bits to the right. Masks the higher bits of the integer.
-            });
+            writeLittleEndian(FECH*FMT*CHANNELS/8, 4, outStream);
             // 33-34 | # 20-21 /* (BitsPerSample * Channels) / 8.1 - 8 bit mono2 - 8 bit stereo/16 bit mono4 - 16 bit stereo */
             outStream.write(new byte[]{CHANNELS * FMT / 8, 0});
             // 35-36 | # 22-23 /* Bits per sample */
@@ -105,13 +90,7 @@ public class DosSend {
             // 37-40 | # 24-27 /* "data" chunk header. Marks the beginning of the data section. */
             outStream.write(new byte[]{'d', 'a', 't', 'a'}); 
             // 41-44 | # 28-2B /* Size of the data section. */
-            outStream.write(new byte[]{
-                (byte) (nbBytes & 0xFF), // Masks the higher bits of the integer, only keeps the lowest 8 bits.
-                (byte) ((nbBytes >> 8) & 0xFF), // Shifts the bits of the integer 8 bits to the right. Masks the higher bits of the integer.
-                (byte) ((nbBytes >> 16) & 0xFF), // Shifts the bits of the integer 16 bits to the right. Masks the higher bits of the integer.
-                (byte) ((nbBytes >> 24) & 0xFF) // Shifts the bits of the integer 24 bits to the right. Masks the higher bits of the integer.
-            });
-
+            writeLittleEndian(44, 4, outStream);
         } catch(Exception e){
             System.out.printf(e.toString());
         }
@@ -124,9 +103,7 @@ public class DosSend {
      */
     public void writeNormalizeWavData(){
         try {
-            /*
-                À compléter
-            */
+            
             
         } catch (Exception e) {
             System.out.println("Erreur d'écriture");
@@ -138,9 +115,14 @@ public class DosSend {
      * @return the number of characters read
      */
     public int readTextData(){
-        /*
-            À compléter
-        */
+        // read text data from standard input
+        while (input.hasNextLine()) {
+            String line = input.nextLine();
+            dataChar = line.toCharArray();
+        }
+        input.close();
+        System.out.println("dataChar: " + Arrays.toString(dataChar)); // ! A enlever avant rendu
+        return 0;
     }
 
     /**
@@ -149,21 +131,43 @@ public class DosSend {
      * @return byte array containing only 0 & 1
      */
     public byte[] charToBits(char[] chars){
-        /*
-            À compléter
-        */
-    
-    return bitArray;
+        int taille = chars.length;
+        // For each character the array will be 8 times bigger
+        byte[] byteArray = new byte[taille * 8];
+        int nbBoucle = 0;
+        while(taille > 0){
+            // byteArray[nbBoucle] = (byte)(chars[nbBoucle]&1);
+            for(int i=0; i<8; i++){
+                // Each char is converted into bytes
+                // Each byte is masked and moved to only take the next lowest bit
+                // The array will be written in little endian
+                // ? Change i to 7-i to write in big endian
+                byteArray[i+(8*nbBoucle)] = (byte)((chars[nbBoucle]>>i) & 1);
+            }
+
+            taille--;
+            nbBoucle++;
+        }
+        System.out.println(Arrays.toString(byteArray)); // ! A enlever avant rendu
+        System.out.println(Arrays.toString(chars)); // ! A enlever avant rendu
+        return byteArray;
     }
 
     /**
      * Modulate the data to send and apply the symbol throughput via BAUDS and FECH.
      * @param bits the data to modulate
      */
-    public void modulateData(byte[] bits){
-        /*
-            À compléter
-        */
+    public void modulateData(byte[] bits){ // TODO : A finir
+        double[] modulatedSignal = new double[data.length() * BAUDS];
+
+        for (int i = 0; i < bits.length; i++) {
+            byte bit = bits[i];
+            for (int j = 0; j < BAUDS; j++) {
+                double time = j;
+                // If the bit is 1, we produce a carrier wave. If it's 0, we produce a flat signal.
+                modulatedSignal[i * BAUDS + j] = bit == '1' ? Math.sin(2 * Math.PI * FP * time) : 0;
+            }
+        }
     }
 
     /**
@@ -175,9 +179,9 @@ public class DosSend {
      * @param title the title of the window
      */
     public static void displaySig(double[] sig, int start, int stop, String mode, String title){
-        /*
-            À compléter
-        */
+      /*
+          À compléter
+      */
     }
 
     /**
@@ -189,34 +193,38 @@ public class DosSend {
      * @param title the title of the window
      */
     public static void displaySig(List<double[]> listOfSigs, int start, int stop, String mode, String title){
-        /*
-            À compléter
-        */
+      /*
+          À compléter
+      */
     }
 
 
     public static void main(String[] args) {
         // créé un objet DosSend
         DosSend dosSend = new DosSend("DosOok_message.wav");
-        // lit le texte à envoyer depuis l'entrée standard
-        // et calcule la durée de l'audio correspondant
-////        dosSend.duree = (double)(dosSend.readTextData()+dosSend.START_SEQ.length/8)*8.0/dosSend.BAUDS;
+        //// lit le texte à envoyer depuis l'entrée standard
+        //// et calcule la durée de l'audio correspondant
+        // dosSend.duree = (double)(dosSend.readTextData()+dosSend.START_SEQ.length/8)*8.0/dosSend.BAUDS;
 
-        // génère le signal modulé après avoir converti les données en bits
-////        dosSend.modulateData(dosSend.charToBits(dosSend.dataChar));
+        // // génère le signal modulé après avoir converti les données en bits
+        // dosSend.modulateData(dosSend.charToBits(dosSend.dataChar));
         // écrit l'entête du fichier wav
         dosSend.writeWavHeader();
-        // écrit les données audio dans le fichier wav
-////        dosSend.writeNormalizeWavData();
+        // // écrit les données audio dans le fichier wav
+        // dosSend.writeNormalizeWavData();
 
-        // affiche les caractéristiques du signal dans la console
-////        System.out.println("Message : "+String.valueOf(dosSend.dataChar));
-////        System.out.println("\tNombre de symboles : "+dosSend.dataChar.length);
-////        System.out.println("\tNombre d'échantillons : "+dosSend.dataMod.length);
-////        System.out.println("\tDurée : "+dosSend.duree+" s");
-////        System.out.println();
+        // // affiche les caractéristiques du signal dans la console
+        // System.out.println("Message : "+String.valueOf(dosSend.dataChar));
+        // System.out.println("\tNombre de symboles : "+dosSend.dataChar.length);
+        // System.out.println("\tNombre d'échantillons : "+dosSend.dataMod.length);
+        // System.out.println("\tDurée : "+dosSend.duree+" s");
+        // System.out.println();
 
-        // exemple d'affichage du signal modulé dans une fenêtre graphique
-////        displaySig(dosSend.dataMod, 1000, 3000, "line", "Signal modulé");
+        // // exemple d'affichage du signal modulé dans une fenêtre graphique
+        // displaySig(dosSend.dataMod, 1000, 3000, "line", "Signal modulé");
+
+        dosSend.charToBits(new char[]{'a', 'b', 'c', 'd'});
+        dosSend.readTextData();
+        dosSend.charToBits(dataChar);
     }
 }
