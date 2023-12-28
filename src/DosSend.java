@@ -3,8 +3,6 @@ import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Scanner;
 
-import java.util.Arrays; // ! A enlever avant rendu
-
 public class DosSend {
     final int FECH = 44100; // fréquence d'échantillonnage
     final int FP = 1000; // fréquence de la porteuses
@@ -154,7 +152,6 @@ public class DosSend {
             String line = input.nextLine();
             dataChar = line.toCharArray();
         }
-        System.out.println("dataChar: " + Arrays.toString(dataChar)); // ! A enlever avant rendu
         return dataChar.length;
     }
 
@@ -188,8 +185,20 @@ public class DosSend {
             taille--;
             nbBoucle++;
         }
-        System.out.println(Arrays.toString(byteArray)); // ! A enlever avant rendu
-        System.out.println(Arrays.toString(chars)); // ! A enlever avant rendu
+
+        // Affichage des caractères lus
+        System.out.print("[ ");
+        for (int i = 0; i < chars.length; i++) {
+            System.out.print(chars[i] + " ");
+        }
+        System.out.println("]");
+
+        // Affichage des bits lus
+        System.out.print("[ ");
+        for (int i = 0; i < byteArray.length; i++) {
+            System.out.print(byteArray[i] + " ");
+        }
+        System.out.println("]");
         return byteArray;
     }
 
@@ -208,9 +217,20 @@ public class DosSend {
         
         for (int i = 0; i < bits.length; i++) {
             for (int j = 0; j < SamplesPerBit; j++) {
-                dataMod[(i * SamplesPerBit) + j] = bits[i] == 1 ? Math.sin(2 * Math.PI * FP * j / FECH) : 0;
+                if (bits[i] == 1) {
+                    dataMod[(i * SamplesPerBit) + j] = Math.sin(2 * Math.PI * FP * j / FECH);
+                } else {
+                    dataMod[(i * SamplesPerBit) + j] = 0;
+                }
             }
         }
+
+        // // Affichage des bits modulés
+        // System.out.println("[ ");
+        // for (int i = 0; i < dataMod.length; i++) {
+        //     System.out.print(dataMod[i] + " ");
+        // }
+
     }
 
     /**
@@ -223,9 +243,38 @@ public class DosSend {
      * @param title the title of the window
      */
     public static void displaySig(double[] sig, int start, int stop, String mode, String title) {
-        /*
-         * À compléter
-         */
+        // Set up the drawing canvas
+        StdDraw.setCanvasSize(1280, 720);
+        StdDraw.setXscale(start, stop);
+
+
+        // Find the min and max values for scaling purposes
+        double min = 0;
+        double max = 0;
+        for (int i = start; i <= stop && i < sig.length; i++) { // Iterate through the array starting at start and ending at stop AND checking if i is not out of bounds
+            if (sig[i] < min)
+                min = sig[i];   // Find the minimum value by adjusting min each time a smaller value is found
+            if (sig[i] > max)
+                max = sig[i];   // Find the maximum value by adjusting max each time a bigger value is found
+        }
+        StdDraw.setYscale(min, max);
+        StdDraw.setTitle("Signal modulé double[]");
+    
+        // Clear the background
+        StdDraw.clear(StdDraw.WHITE);
+    
+        // Draw the signal
+        for (int i = start; i < stop && i < sig.length - 1; i++) {
+            if ("line".equals(mode)) {
+                StdDraw.line(i, sig[i], i + 1, sig[i + 1]);
+            } else if ("point".equals(mode)) {
+                StdDraw.point(i, sig[i]);
+            }
+        }
+    
+        // Show the drawing on screen
+        StdDraw.show();
+
     }
 
     /**
@@ -238,9 +287,46 @@ public class DosSend {
      * @param title      the title of the window
      */
     public static void displaySig(List<double[]> listOfSigs, int start, int stop, String mode, String title) {
-        /*
-         * À compléter
-         */
+        // Set up the drawing canvas
+        StdDraw.setCanvasSize(1600, 1000);
+        StdDraw.setXscale(start, stop);
+
+        // Find the min and max values across all signals for scaling purpose
+        double min = 0;
+        double max = 0;
+
+        for (double[] sig : listOfSigs) {   // Iterate through the list of signals
+            for (int i = start; i <= stop && i < sig.length; i++) { // Iterate through the array starting at start and ending at stop AND checking if i is not out of bounds
+                if (sig[i] < min)
+                    min = sig[i]; // Find the minimum value by adjusting min each time a smaller value is found
+                if (sig[i] > max)
+                    max = sig[i]; // Find the maximum value by adjusting max each time a bigger value is found
+            }
+        }
+        StdDraw.setYscale(min, max);
+        StdDraw.setTitle("Signal modulé List<>");
+
+        // Clear the background
+        StdDraw.clear(StdDraw.WHITE);
+
+        // Set the pen color and thickness
+        StdDraw.setPenRadius(0.005);
+
+        // Draw each signal in the list
+        for (double[] sig : listOfSigs) {
+            for (int i = start; i < stop && i < sig.length - 1; i++) {
+                if ("line".equals(mode)) {
+                    StdDraw.line(i, sig[i], i + 1, sig[i + 1]);
+                } else if ("point".equals(mode)) {
+                    StdDraw.point(i, sig[i]);
+                }
+            }
+        }
+
+        // Show the drawing on screen
+        StdDraw.show();
+
+        // ! we never generate multiple signals
     }
 
     public static void main(String[] args) {
@@ -266,9 +352,5 @@ public class DosSend {
 
         // exemple d'affichage du signal modulé dans une fenêtre graphique
         displaySig(dosSend.dataMod, 1000, 3000, "line", "Signal modulé");
-
-        dosSend.charToBits(new char[] { 'a', 'b', 'c', 'd' });
-        dosSend.readTextData();
-        dosSend.charToBits(dosSend.dataChar);
     }
 }
