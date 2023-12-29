@@ -24,9 +24,15 @@ public class DosRead {
         try {
             fileInputStream= new FileInputStream(path);
             fileInputStream.read(header);
-            /*
-              À compléter
-            */
+            sampleRate= byteArrayToInt(header, 24, 32);
+            // on convertit les 4 octets (à partir de l'indice 24)
+            // en int pour avoir le taux d'échantillonnage ( 32 bits = 4 octets)
+            bitsPerSample= byteArrayToInt(header, 34, 16);
+            // on convertit les 2 octets (à partir de l'indice 34) permettant de récupérer
+            // le nombre de bits par échantillon
+            dataSize= byteArrayToInt(header, 40, 32);
+            // on convertit les 4 octets (à partir de l'indice 40) permettant de récupérer
+            // la taille du fichier
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -64,18 +70,26 @@ public class DosRead {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        /*
-          À compléter
-        */
+        audio = new double[dataSize/2]; // Car PCM entier(code1) sur 2 octets
+        for (int i = 0; i<(dataSize/2); i++) {
+            audio[i] = (double) byteArrayToInt(audioData,2*i,16);
+            // on remplit le tableau audio avec les valeurs en int de 2 octets (16 bits)
+            // Puisque l'on considère que le format de stockage des données est sur 2 octets.
+        }
+
     }
 
     /**
      * Reverse the negative values of the audio array
      */
     public void audioRectifier(){
-      /*
-        À compléter
-      */
+      for (int i = 0; i<audio.length; i++) {
+        if (audio[i] < 0) {
+          audio[i] = -audio[i];
+        }
+      }
+      // on vérifie si une valeur est négative, si oui
+        // on récupère son opposé
     }
 
     /**
@@ -84,10 +98,13 @@ public class DosRead {
      * @param n the number of samples to average
      */
     public void audioLPFilter(int n) {
-      /*
-        À compléter
-      */
+        for(int i = 0; i<audio.length; i++) {
+            // à l'aide j'ai rien compris
+        }
+
+
     }
+
 
     /**
      * Resample the audio array and apply a threshold
@@ -95,9 +112,14 @@ public class DosRead {
      * @param threshold the threshold that separates 0 and 1
      */
     public void audioResampleAndThreshold(int period, int threshold){
-      /*
-        À compléter
-      */
+        for (int i = 0; i<audio.length; i++) {
+          if (audio[i]< threshold) {
+            audio[i]=0;
+          } else {
+            audio[i]=1;
+          }
+
+
     }
 
     /**
@@ -106,9 +128,19 @@ public class DosRead {
      * The next first symbol is the first bit of the first char.
      */
     public void decodeBitsToChar(){
-      /*
-        À compléter
-      */
+        boolean corresp = true;
+        }
+        for(int i=0; i < START_SEQ.length; i++){
+            if(outputBits[i] != START_SEQ[i]){
+                corresp = false;
+            }
+            if (corresp == true){
+                ...
+
+        }
+
+        }
+
     }
 
     /**
