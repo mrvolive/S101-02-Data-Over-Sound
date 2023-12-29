@@ -1,0 +1,7 @@
+sonar.projectKey=DosSend1001
+sonar.projectName= «SAE DosSend G1»
+sonar.projectVersion=1.0
+sonar.sources=DosSend.java
+sonar.exclusions=StdDraw.java
+sonar.java.libraries=/usr/lib/jvm/java-21-openjdk/lib/
+sonar.login=sqp_c7bf4ad458aad9e14d6696d9a741877c7832e65e

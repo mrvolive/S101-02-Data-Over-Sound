@@ -1,0 +1,10 @@
+\babel@toc {english}{}\relax 
+\thispagestyle {empty}
+\contentsline {chapter}{\numberline {1}Introduction}{6}{chapter.1}%
+\contentsline {chapter}{\numberline {2}Methodology}{7}{chapter.2}%
+\contentsline {section}{\numberline {2.1}DosSend and DosRead usage}{7}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Monitoring the speed of the filter}{7}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Checking the filter's accuracy}{7}{section.2.3}%
+\contentsline {chapter}{\numberline {3}Results}{8}{chapter.3}%
+\contentsline {chapter}{\numberline {4}Discussion}{9}{chapter.4}%
+\contentsline {chapter}{\numberline {5}Conclusion}{10}{chapter.5}%

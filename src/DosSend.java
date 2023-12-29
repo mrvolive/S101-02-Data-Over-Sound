@@ -162,9 +162,9 @@ public class DosSend {
      * @return byte array containing only 0 & 1
      */
     public byte[] charToBits(char[] chars) {
-        int taille = chars.length;
+        int tailleChar = chars.length;
         // For each character the array will be 8 times bigger
-        byte[] byteArray = new byte[(taille * 8)+START_SEQ.length];
+        byte[] byteArray = new byte[(tailleChar * 8)+START_SEQ.length];
 
         // Add the start sequence
         for (int i = 0; i < START_SEQ.length; i++) {
@@ -172,8 +172,7 @@ public class DosSend {
         }
 
         int nbBoucle = 0;
-        while (taille > 0) {
-            // byteArray[nbBoucle] = (byte)(chars[nbBoucle]&1);
+        while (tailleChar > 0) {
             for (int i = START_SEQ.length; i < 8 + START_SEQ.length; i++) {
                 // Each char is converted into bytes
                 // Each byte is masked and moved to only take the next lowest bit
@@ -182,7 +181,7 @@ public class DosSend {
                 byteArray[i + (8 * nbBoucle)] = (byte) ((chars[nbBoucle] >> i - START_SEQ.length) & 1);
             }
 
-            taille--;
+            tailleChar--;
             nbBoucle++;
         }
 
@@ -212,15 +211,15 @@ public class DosSend {
         // la fréquence de la porteuse est de 1kHz (FP)
         // La fréquence d'échantillonnage est de 44100Hz (FECH)
 
-        int SamplesPerBit = FECH / BAUDS;
-        dataMod = new double[bits.length * SamplesPerBit];
+        int samplesPerBit = FECH / BAUDS;
+        dataMod = new double[bits.length * samplesPerBit];
         
         for (int i = 0; i < bits.length; i++) {
-            for (int j = 0; j < SamplesPerBit; j++) {
+            for (int j = 0; j < samplesPerBit; j++) {
                 if (bits[i] == 1) {
-                    dataMod[(i * SamplesPerBit) + j] = Math.sin(2 * Math.PI * FP * j / FECH);
+                    dataMod[(i * samplesPerBit) + j] = Math.sin(2 * Math.PI * FP * j / FECH);
                 } else {
-                    dataMod[(i * SamplesPerBit) + j] = 0;
+                    dataMod[(i * samplesPerBit) + j] = 0;
                 }
             }
         }
@@ -246,18 +245,7 @@ public class DosSend {
         // Set up the drawing canvas
         StdDraw.setCanvasSize(1280, 720);
         StdDraw.setXscale(start, stop);
-
-
-        // Find the min and max values for scaling purposes
-        double min = 0;
-        double max = 0;
-        for (int i = start; i <= stop && i < sig.length; i++) { // Iterate through the array starting at start and ending at stop AND checking if i is not out of bounds
-            if (sig[i] < min)
-                min = sig[i];   // Find the minimum value by adjusting min each time a smaller value is found
-            if (sig[i] > max)
-                max = sig[i];   // Find the maximum value by adjusting max each time a bigger value is found
-        }
-        StdDraw.setYscale(min, max);
+        StdDraw.setYscale(-1, 1);
         StdDraw.setTitle("Signal modulé double[]");
     
         // Clear the background
@@ -290,20 +278,7 @@ public class DosSend {
         // Set up the drawing canvas
         StdDraw.setCanvasSize(1600, 1000);
         StdDraw.setXscale(start, stop);
-
-        // Find the min and max values across all signals for scaling purpose
-        double min = 0;
-        double max = 0;
-
-        for (double[] sig : listOfSigs) {   // Iterate through the list of signals
-            for (int i = start; i <= stop && i < sig.length; i++) { // Iterate through the array starting at start and ending at stop AND checking if i is not out of bounds
-                if (sig[i] < min)
-                    min = sig[i]; // Find the minimum value by adjusting min each time a smaller value is found
-                if (sig[i] > max)
-                    max = sig[i]; // Find the maximum value by adjusting max each time a bigger value is found
-            }
-        }
-        StdDraw.setYscale(min, max);
+        StdDraw.setYscale(-1, 1);
         StdDraw.setTitle("Signal modulé List<>");
 
         // Clear the background

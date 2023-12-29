@@ -1,0 +1,170 @@
+\documentclass[a4paper, 12pt]{report}
+
+%====================== PACKAGES ======================
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+%pour gérer les positionnement d'images
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{url}
+%pour les informations sur un document compilé en PDF et les liens externes / internes
+\usepackage{hyperref}
+%pour la mise en page des tableaux
+\usepackage{array}
+\usepackage{tabularx}
+%pour utiliser \floatbarrier
+%\usepackage{placeins}
+%\usepackage{floatrow}
+%espacement entre les lignes
+\usepackage{setspace}
+%modifier la mise en page de l'abstract
+\usepackage{abstract}
+%police et mise en page (marges) du document
+\usepackage[T1]{fontenc}
+\usepackage[top=2cm, bottom=2cm, left=2cm, right=2cm]{geometry}
+%Pour les galerie d'images
+\usepackage{subfig}
+\usepackage{eurosym}
+%Pour la mise en page du code
+\usepackage{listings}
+\usepackage{color}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+
+
+\lstdefinestyle{tf}{frame=shadowbox,
+	rulesepcolor=\color{gray},
+	framexleftmargin=5mm,
+	aboveskip=3mm,
+	belowskip=3mm,
+	showstringspaces=false,
+	columns=flexible,
+	basicstyle={\small\ttfamily},
+	numbers=left,
+	numberstyle=\tiny,
+	breaklines=true,
+	tabsize=3
+}
+
+\lstset{frame=tb,
+	extendedchars=true,
+	inputencoding=latin1,
+	rulesepcolor=\color{gray},
+	framexleftmargin=5mm,
+	language=bash,
+	aboveskip=3mm,
+	belowskip=3mm,
+	showstringspaces=false,
+	columns=flexible,
+	basicstyle={\small\ttfamily},
+	numbers=left,
+	numberstyle=\tiny,
+	keywordstyle=\color{blue},
+	stringstyle=\color{mauve},
+	breaklines=true,
+	tabsize=3,
+	literate=%
+	{é}{{\'e}}{1}%
+	{è}{{\`e}}{1}%
+	{à}{{\`a}}{1}%
+	{ç}{{\c{c}}}{1}%
+	{œ}{{\oe}}{1}%
+	{ù}{{\`u}}{1}%
+	{É}{{\'E}}{1}%
+	{È}{{\`E}}{1}%
+	{À}{{\`A}}{1}%
+	{Ç}{{\c{C}}}{1}%
+	{Œ}{{\OE}}{1}%
+	{Ê}{{\^E}}{1}%
+	{ê}{{\^e}}{1}%
+	{î}{{\^i}}{1}%
+	{ô}{{\^o}}{1}%
+	{û}{{\^u}}{1}%
+	{ä}{{\"{a}}}1
+	{ë}{{\"{e}}}1
+	{ï}{{\"{i}}}1
+	{ö}{{\"{o}}}1
+	{ü}{{\"{u}}}1
+	{û}{{\^{u}}}1
+	{â}{{\^{a}}}1
+	{Â}{{\^{A}}}1
+	{Î}{{\^{I}}}1
+}
+
+%====================== INFORMATION ET REGLES ======================
+
+%rajouter les numérotation pour les \paragraphe et \subparagraphe
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+
+\hypersetup{							% Information sur le document
+pdfauthor = {Sugdenaz EKICI,
+			Yahia KHERZA,
+			Olivier MARAVAL,
+    		Valentin VIRET-JACQUOT},			% Auteurs
+pdftitle = {Architecture logicielle et notice d'installation / utilisation du poste de développement},			% Titre du document
+pdfsubject = {Mémoire de Projet},		% Sujet
+pdfkeywords = {Tag1, Tag2, Tag3, ...},	% Mots-clefs
+pdfstartview={FitH}}					% ajuste la page à la largueur de l'écran
+%pdfcreator = {MikTeX},% Logiciel qui a crée le document
+%pdfproducer = {}} % Société avec produit le logiciel
+
+%======================== DEBUT DU DOCUMENT ========================
+
+\begin{document}
+
+\addtocontents{toc}{\protect\thispagestyle{empty}}
+
+%régler l'espacement entre les lignes
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+%page de garde
+\input{./title.tex}
+
+%page blanche
+\newpage
+~
+\thispagestyle{empty}
+
+\pagenumbering{gobble}
+\input{./abstract.tex}
+\tableofcontents
+\thispagestyle{empty}
+
+%ne pas numéroter le sommaire
+
+\newpage
+
+%espacement entre les lignes d'un tableau
+\renewcommand{\arraystretch}{1.5}
+
+%====================== INCLUSION DES PARTIES ======================
+
+~
+\thispagestyle{empty}
+
+
+\newpage
+\pagenumbering{arabic}
+
+\setcounter{page}{6}
+
+\input{./intro.tex}
+\input{./method.tex}
+\input{./results.tex}
+\input{./discussion.tex}
+\input{./conclusion.tex}
+
+\newpage
+
+%récupérer les citation avec "/footnotemark"
+\nocite{*}
+
+
+
+\end{document}
