@@ -34,6 +34,9 @@
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{darkWhite}{rgb}{0.94,0.94,0.94}
+\definecolor{black}{rgb}{0,0,0}
+
 
 
 
@@ -51,12 +54,10 @@
 	tabsize=3
 }
 
-\lstset{frame=tb,
-	extendedchars=true,
-	inputencoding=latin1,
+\lstdefinestyle{console}{frame=shadowbox,
+	backgroundcolor=\color{darkWhite},
 	rulesepcolor=\color{gray},
 	framexleftmargin=5mm,
-	language=bash,
 	aboveskip=3mm,
 	belowskip=3mm,
 	showstringspaces=false,
@@ -64,8 +65,29 @@
 	basicstyle={\small\ttfamily},
 	numbers=left,
 	numberstyle=\tiny,
+	breaklines=true,
+	tabsize=3
+}
+
+\lstdefinestyle{color}{
+	otherkeywords={1, 2, 3, 4, 5, 6, 7, 8, 9, 0},
 	keywordstyle=\color{blue},
-	stringstyle=\color{mauve},
+	stringstyle=\color{mauve}
+}
+
+
+\lstset{frame=tb,
+	extendedchars=true,
+	inputencoding=latin1,
+	rulesepcolor=\color{gray},
+	framexleftmargin=5mm,
+	aboveskip=3mm,
+	belowskip=3mm,
+	showstringspaces=false,
+	columns=flexible,
+	basicstyle={\small\ttfamily},
+	numbers=left,
+	numberstyle=\tiny,
 	breaklines=true,
 	tabsize=3,
 	literate=%

@@ -246,10 +246,13 @@ public class DosSend {
         StdDraw.setCanvasSize(1280, 720);
         StdDraw.setXscale(start, stop);
         StdDraw.setYscale(-1, 1);
-        StdDraw.setTitle("Signal modulé double[]");
+        StdDraw.setTitle(title + " double[]");
     
         // Clear the background
-        StdDraw.clear(StdDraw.WHITE);
+        StdDraw.clear();
+
+        // Set the pen color and thickness
+        StdDraw.setPenRadius(0.005);
     
         // Draw the signal
         for (int i = start; i < stop && i < sig.length - 1; i++) {
@@ -279,10 +282,10 @@ public class DosSend {
         StdDraw.setCanvasSize(1600, 1000);
         StdDraw.setXscale(start, stop);
         StdDraw.setYscale(-1, 1);
-        StdDraw.setTitle("Signal modulé List<>");
+        StdDraw.setTitle(title + " List<double[]>");
 
         // Clear the background
-        StdDraw.clear(StdDraw.WHITE);
+        StdDraw.clear();
 
         // Set the pen color and thickness
         StdDraw.setPenRadius(0.005);
