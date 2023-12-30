@@ -98,11 +98,15 @@ public class DosRead {
      * @param n the number of samples to average
      */
     public void audioLPFilter(int n) {
-        for(int i = 0; i<audio.length; i++) {
-            // à l'aide j'ai rien compris
+        for (int i = 0; i < audio.length; i++) {
+            double somme = 0;
+            for (int j = 0; j < n; j++) {
+                if (i - j >= 0) {
+                    somme = somme + audio[i - j];
+                }
+            }
+            audio[i] = somme / n;
         }
-
-
     }
 
 
@@ -111,46 +115,65 @@ public class DosRead {
      * @param period the number of audio samples by symbol
      * @param threshold the threshold that separates 0 and 1
      */
-    public void audioResampleAndThreshold(int period, int threshold){
-        for (int i = 0; i<audio.length; i++) {
-          if (audio[i]< threshold) {
-            audio[i]=0;
-          } else {
-            audio[i]=1;
-          }
-
-
-    }
-
-    /**
-     * Decode the outputBits array to a char array
-     * The decoding is done by comparing the START_SEQ with the actual beginning of outputBits.
-     * The next first symbol is the first bit of the first char.
-     */
-    public void decodeBitsToChar(){
-        boolean corresp = true;
-        }
-        for(int i=0; i < START_SEQ.length; i++){
-            if(outputBits[i] != START_SEQ[i]){
-                corresp = false;
+    public void audioResampleAndThreshold(int period, int threshold) {
+        for (int i = 0; i < audio.length; i++) {
+            if (audio[i] < threshold) {
+                audio[i] = 0;
+            } else {
+                audio[i] = 1;
             }
-            if (corresp == true){
-                ...
+
 
         }
 
+        /**
+         * Decode the outputBits array to a char array
+         * The decoding is done by comparing the START_SEQ with the actual beginning of outputBits.
+         * The next first symbol is the first bit of the first char.
+         */
+        public void decodeBitsToChar() {
+            boolean corresp = true;
+
+            for (int i = 0; i < START_SEQ.length; i++) {
+                if (outputBits[i] != START_SEQ[i]) {
+                    corresp = false;
+                    //vérifie si le tableau de bits correspond au tableau de bits de départ
+                }
+                if (corresp == true) {
+                    int nbDeCaractere = (outputBits.length - START_SEQ.length) / 8; //on retire la longueur de la
+                    // séquence du début pour avoir le nombre de caractères et on divise par 8
+                    //  car chaque caractère est codé sur 8 bits
+                    decodedChars = new char[nbDeCaractere];
+                    // Création du tableau contenant les caractères décodés
+                    for (int j = 0; j < nbDeCaractere; j++) {
+                        int caractere = 0;
+                        for (int k = 0; k < 8; k++) {
+                            caractere = caractere + outputBits[START_SEQ.length + j*8 + k]*(int) Math.pow(2, 7 - k);
+                            // pour chaque octet, on parcourt les 8 bits, puis on multiplie par 2^7-k
+                            // k permet de parcourir de gauche à droite, et 7-k permet
+                            // de diminuer l'exposant de 1 à chaque fois en fonction de la position du bit
+
+                        }
+                        decodedChars[j] = (char)caractere;
+                        // on convertit notre valeur en caractere ASCII
+                    }
+                }
+            }
         }
 
-    }
 
     /**
      * Print the elements of an array
      * @param data the array to print
      */
     public static void printIntArray(char[] data) {
-      /*
-        À compléter
-      */
+        System.out.print("[");
+        }
+        for (int i = 0; i < data.length; i++) {
+            System.out.print(data[i]);
+        }
+        System.out.print("]");
+        System.out.println("");
     }
 
 
@@ -163,9 +186,29 @@ public class DosRead {
      * @param title the title of the window
      */
     public static void displaySig(double[] sig, int start, int stop, String mode, String title){
-      /*
-        À compléter. Méthode a priori identique à sa version dans DosSend.
-      */
+        // Set up the drawing canvas
+        StdDraw.setCanvasSize(1280, 720);
+        StdDraw.setXscale(start, stop);
+        StdDraw.setYscale(-1, 1);
+        StdDraw.setTitle(title + " double[]");
+
+        // Clear the background
+        StdDraw.clear();
+
+        // Set the pen color and thickness
+        StdDraw.setPenRadius(0.005);
+
+        // Draw the signal
+        for (int i = start; i < stop && i < sig.length - 1; i++) {
+            if ("line".equals(mode)) {
+                StdDraw.line(i, sig[i], i + 1, sig[i + 1]);
+            } else if ("point".equals(mode)) {
+                StdDraw.point(i, sig[i]);
+            }
+        }
+
+        // Show the drawing on screen
+        StdDraw.show();
     }
 
     /**
