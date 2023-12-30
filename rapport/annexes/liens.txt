@@ -1,0 +1,2 @@
+[SonarScanner]
+http://sonar.iut-bm.univ-fcomte.fr:9000/dashboard?id=DosSend1001
