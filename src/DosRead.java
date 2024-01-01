@@ -1,8 +1,5 @@
 
 import java.io.*;
-import java.util.Arrays;
-
-
 
 public class DosRead {
     static final int FP = 1000;
@@ -42,7 +39,6 @@ public class DosRead {
             throw new RuntimeException(e);
         }
     }
-
     /**
      * Helper method to convert a little-endian byte array to an integer
      * @param bytes the byte array to convert
@@ -60,7 +56,6 @@ public class DosRead {
                     (bytes[offset] & 0xFF);
         else return (bytes[offset] & 0xFF);
     }
-
     /**
      * Read the audio data from the wav file
      * and convert it to an array of doubles
@@ -74,27 +69,29 @@ public class DosRead {
             e.printStackTrace();
         }
         audio = new double[dataSize/2]; // Car PCM entier(code1) sur 2 octets
-        outputBits = new int[audio.length];
         for (int i = 0; i<(dataSize/2); i++) {
             audio[i] = (double) byteArrayToInt(audioData,2*i,16);
-            // on remplit le tableau audio avec les valeurs en int de 2 octets (16 bits)
-            // Puisque l'on considère que le format de stockage des données est sur 2 octets.
-    }
+            // on remplit le tableau audio avec les valeurs en int codées sur de 2 octets (16 bits)
+
+        }
+        System.out.println("caca");
+        System.out.println(audio[0]);
+        System.out.println(audio[1]);
+        System.out.println(audio[2]);
     }
 
     /**
      * Reverse the negative values of the audio array
      */
     public void audioRectifier(){
-            for (int i = 0; i<audio.length; i++) {
-                if (audio[i] < 0) {
-                    audio[i] = -audio[i];
-                }
+        for (int i = 0; i<audio.length; i++) {
+            if (audio[i] < 0) {
+                audio[i] = -audio[i];
             }
-            // on vérifie si une valeur est négative, si oui
-            // on récupère son opposé
+        }
+        // on vérifie si une valeur est négative, si oui
+        // on récupère son opposé
     }
-
     /**
      * Apply a low pass filter to the audio array
      * Fc = (1/2n)*FECH
@@ -109,26 +106,48 @@ public class DosRead {
                 }
             }
             audio[i] = somme / n;
-        }
-    }
 
+
+        }
+        System.out.println("pipi");
+        System.out.println(audio[0]);
+        System.out.println(audio[1]);
+        System.out.println(audio[2]);
+
+    }
     /**
      * Resample the audio array and apply a threshold
-     * @param period the number of audio samples by symbol
+     * @param period the number of audio samples per symbol
      * @param threshold the threshold that separates 0 and 1
      */
-    public void audioResampleAndThreshold(int period, int threshold){
-        for (int i = 0; i < audio.length; i++) {
-            if (audio[i] < threshold) {
-                audio[i] = 0;
-                outputBits[i] = 0;
-            } else {
-                audio[i] = 1;
-                outputBits[i] = 1;
+    public void audioResampleAndThreshold(int period, int threshold) {
+        // le nombre de symboles
+        int numSymbols = audio.length / period;
+        System.out.println("numSymbols = " + numSymbols);
+        System.out.println("audio.length = " + audio.length);
+        // le tableau qui contiendra les valeurs rééchantillonnées
+        double[] resampledAudio = new double[numSymbols];
+        // Rééchantillonnage
+        for (int i = 0; i < numSymbols; i++) {
+            double sum = 0;
+            for (int j = 0; j < period; j++) {
+                int index = i * period + j;
+                if (index < audio.length) {
+                    sum += audio[index];
+                }
             }
-    }
+            resampledAudio[i] = sum / period;
+        }
+        // utilisation du seuil pour déterminer la valeur de chaque bit
+        outputBits = new int[numSymbols];
+        for (int i = 0; i < numSymbols; i++) {
+            if (resampledAudio[i] >= threshold) {
+                outputBits[i] = 1;
+            } else {
+                outputBits[i] = 0;
+            }
 
-
+        }
     }
 
     /**
@@ -138,43 +157,35 @@ public class DosRead {
      */
     public void decodeBitsToChar() {
         boolean corresp = true;
-        System.out.println("ouiii12");
-        if (outputBits == null || outputBits.length < START_SEQ.length) {
-            System.out.println("Erreur : Tableau de bits de sortie invalide pour le décodage.");
-            return;
-        }
-
-        // Vérifier si la séquence de début START_SEQ correspond au début du tableau de bits de sortie
         for (int i = 0; i < START_SEQ.length; i++) {
             if (outputBits[i] != START_SEQ[i]) {
                 corresp = false;
-                break;
+                System.out.println("Mismatch at index " + i);
+                System.out.println("outputBits[" + i + "] = " + outputBits[i]);
+                System.out.println("START_SEQ[" + i + "] = " + START_SEQ[i]);
+                break;  // Sortir de la boucle dès qu'une non-correspondance est trouvée
             }
         }
-        System.out.println("ouiii1");
 
         if (corresp == true) {
-            System.out.println("ouiii");
-            int nbDeCaractere = (outputBits.length - START_SEQ.length) / 8; // on retire la longueur de la
-            // séquence du début pour avoir le nombre de caractères et on divise par 8
-            // car chaque caractère est codé sur 8 bits
-            decodedChars = new char[nbDeCaractere];
-
-            // Création du tableau contenant les caractères décodés
-            for (int j = 0; j < nbDeCaractere; j++) {
-                int caractere = 0;
-                for (int k = 0; k < 8; k++) {
-                    caractere = caractere + outputBits[START_SEQ.length + j * 8 + k] * (int) Math.pow(2, 7 - k);
-                    // pour chaque octet, on parcourt les 8 bits, puis on multiplie par 2^7-k
-                    // k permet de parcourir de gauche à droite, et 7-k permet
-                    // de diminuer l'exposant de 1 à chaque fois en fonction de la position du bit
+                int nbDeCaractere = (outputBits.length - START_SEQ.length) / 8; //on retire la longueur de la
+                // séquence du début pour avoir le nombre de caractères et on divise par 8
+                //  car chaque caractère est codé sur 8 bits
+                decodedChars = new char[nbDeCaractere];
+                // Création du tableau contenant les caractères décodés
+                for (int j = 0; j < nbDeCaractere; j++) {
+                    int caractere = 0;
+                    for (int k = 0; k < 8; k++) {
+                        caractere = caractere + outputBits[START_SEQ.length + j*8 + k]*(int) Math.pow(2, 7 - k);
+                        // pour chaque octet, on parcourt les 8 bits, puis on multiplie par 2^7-k
+                        // k permet de parcourir de gauche à droite, et 7-k permet
+                        // de diminuer l'exposant de 1 à chaque fois en fonction de la position du bit
+                    }
+                    decodedChars[j] = (char)caractere;
+                    // on convertit notre valeur en caractere ASCII
                 }
-                decodedChars[j] = (char) caractere;
-                // on convertit notre valeur en caractere ASCII
             }
         }
-    }
-
 
     /**
      * Print the elements of an array
@@ -199,19 +210,17 @@ public class DosRead {
      * @param mode "line" or "point"
      * @param title the title of the window
      */
-  /**  public static void displaySig(double[] sig, int start, int stop, String mode, String title){
+    public static void displaySig(double[] sig, int start, int stop, String mode, String title){
         // Set up the drawing canvas
+        StdDraw.setPenColor(StdDraw.BLACK);
         StdDraw.setCanvasSize(1280, 720);
         StdDraw.setXscale(start, stop);
         StdDraw.setYscale(-1, 1);
         StdDraw.setTitle(title + " double[]");
-
         // Clear the background
         StdDraw.clear();
-
         // Set the pen color and thickness
         StdDraw.setPenRadius(0.005);
-
         // Draw the signal
         for (int i = start; i < stop && i < sig.length - 1; i++) {
             if ("line".equals(mode)) {
@@ -220,33 +229,30 @@ public class DosRead {
                 StdDraw.point(i, sig[i]);
             }
         }
-
         // Show the drawing on screen
         StdDraw.show();
     }
+
 
     /**
      *  Un exemple de main qui doit pourvoir être exécuté avec les méthodes
      * que vous aurez conçues.
      */
-
     public static void main(String[] args) {
         if (args.length != 1) {
             System.out.println("Usage: java DosRead <input_wav_file>");
             return;
         }
-        String wavFilePath = args[0];
 
+        String wavFilePath = args[0];
         // Open the WAV file and read its header
         DosRead dosRead = new DosRead();
         dosRead.readWavHeader(wavFilePath);
-
         // Print the audio data properties
         System.out.println("Fichier audio: " + wavFilePath);
         System.out.println("\tSample Rate: " + dosRead.sampleRate + " Hz");
         System.out.println("\tBits per Sample: " + dosRead.bitsPerSample + " bits");
         System.out.println("\tData Size: " + dosRead.dataSize + " bytes");
-
         // Read the audio data
         dosRead.readAudioDouble();
         // reverse the negative values
@@ -254,18 +260,13 @@ public class DosRead {
         // apply a low pass filter
         dosRead.audioLPFilter(44);
         // Resample audio data and apply a threshold to output only 0 & 1
-        dosRead.audioResampleAndThreshold(dosRead.sampleRate/BAUDS, 12000 );
-
+        dosRead.audioResampleAndThreshold(dosRead.sampleRate/BAUDS, 12000 ); //12000
         dosRead.decodeBitsToChar();
-        System.out.println("258888");
         if (dosRead.decodedChars != null){
-            System.out.println("p5");
             System.out.print("Message décodé : ");
             printIntArray(dosRead.decodedChars);
         }
-
-        //displaySig(dosRead.audio, 0, dosRead.audio.length-1, "line", "Signal audio");
-
+        displaySig(dosRead.audio, 0, dosRead.audio.length-1, "line", "Signal audio");
         // Close the file input stream
         try {
             dosRead.fileInputStream.close();
