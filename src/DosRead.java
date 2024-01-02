@@ -98,22 +98,36 @@ public class DosRead {
      * @param n the number of samples to average
      */
     public void audioLPFilter(int n) {
-        for (int i = 0; i < audio.length; i++) {
-            double somme = 0;
-            for (int j = 0; j < n; j++) {
-                if (i - j >= 0) {
-                    somme = somme + audio[i - j];
-                }
+        double[] inputSignal = audio.clone();
+
+        for (int i = n; i < inputSignal.length; i++) {
+            double sum = 0;
+            for (int j = i - n; j <= i; j++) {
+                sum += inputSignal[j];
             }
-            audio[i] = somme / n;
-
-
+            audio[i] = sum / (n + 1);
         }
-        System.out.println("pipi");
-        System.out.println(audio[0]);
-        System.out.println(audio[1]);
-        System.out.println(audio[2]);
+        
+        // Calcul du gain en dB
+        double Gmax = Double.NEGATIVE_INFINITY;
+        double Gmax_3dB = 0;
+        double f_coupure = 0;
 
+        for (int i = 0; i < inputSignal.length; i++) {
+            double s_f = audio[i]; // Amplitude de la sinusoïde en sortie du filtre
+            double e_f = Math.abs(inputSignal[i]); // Amplitude de la sinusoïde en entrée du filtre
+            double currentGain = 20 * Math.log10(s_f / e_f);
+            if (currentGain > Gmax) {
+                Gmax = currentGain;
+            }
+            if (Gmax - currentGain <= 3 && Gmax_3dB == 0) {
+                Gmax_3dB = currentGain;
+                f_coupure = i; // Utilisation de l'indice comme fréquence de coupure
+            }
+        }
+
+        // Utilisation de la fréquence de coupure
+        // ...
     }
     /**
      * Resample the audio array and apply a threshold
@@ -167,7 +181,7 @@ public class DosRead {
             }
         }
 
-        if (corresp == true) {
+        if (corresp) {
                 int nbDeCaractere = (outputBits.length - START_SEQ.length) / 8; //on retire la longueur de la
                 // séquence du début pour avoir le nombre de caractères et on divise par 8
                 //  car chaque caractère est codé sur 8 bits
@@ -215,7 +229,7 @@ public class DosRead {
         StdDraw.setPenColor(StdDraw.BLACK);
         StdDraw.setCanvasSize(1280, 720);
         StdDraw.setXscale(start, stop);
-        StdDraw.setYscale(-1, 1);
+        StdDraw.setYscale(-10000, 50000);
         StdDraw.setTitle(title + " double[]");
         // Clear the background
         StdDraw.clear();
