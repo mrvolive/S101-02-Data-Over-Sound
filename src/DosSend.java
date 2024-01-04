@@ -243,6 +243,7 @@ public class DosSend {
      */
     public static void displaySig(double[] sig, int start, int stop, String mode, String title) {
         // Set up the drawing canvas
+        StdDraw.enableDoubleBuffering();
         StdDraw.setCanvasSize(1280, 720);
         StdDraw.setXscale(start, stop);
         StdDraw.setYscale(-1, 1);
