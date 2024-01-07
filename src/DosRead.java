@@ -4,7 +4,6 @@
  */
 
 import java.io.*;
-import java.util.Arrays;
 
 
 public class DosRead {
@@ -56,8 +55,9 @@ public class DosRead {
      * @return the integer value
      */
     private static int byteArrayToInt(byte[] bytes, int offset, int fmt) {
-        if (fmt == 16)
+        if (fmt == 16){
             return ((bytes[offset + 1] & 0xFF) << 8) | (bytes[offset] & 0xFF);
+        }
         else if (fmt == 32)
             return ((bytes[offset + 3] & 0xFF) << 24) |
                     ((bytes[offset + 2] & 0xFF) << 16) |
@@ -78,13 +78,15 @@ public class DosRead {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        audio = new double[dataSize / 2]; // Car PCM entier(code1) sur 2 octets
-        for (int i = 0; i < (dataSize / 2); i++) {
-            audio[i] = (double) byteArrayToInt(audioData, 2 * i, 16);
-            // on remplit le tableau audio avec les valeurs en int codées sur de 2 octets (16 bits)
-
+        audio = new double[dataSize]; // Car PCM entier(code1) sur 2 octets
+        for (int i = 0; i < (dataSize / 2) - 44; i++) { // on remplit le tableau audio avec les valeurs en int codées sur de 2 octets (16 bits)
+            if (byteArrayToInt(audioData, 44 + 2 * i, 16) > 32767) { // On remet les valeurs négatives à leur valeur d'origine
+                audio[i] = byteArrayToInt(audioData, 44 + 2 * i, 16) - 65536;
+            } else {
+                audio[i] = byteArrayToInt(audioData, 44 + 2 * i, 16);
+            }
+            
         }
-
     }
 
     /**
@@ -94,8 +96,6 @@ public class DosRead {
         for (int i = 0; i < audio.length; i++) {
             if (audio[i] < 0) {
                 audio[i] = -audio[i];
-                System.out.print("caca");
-
             }
         }
         // on vérifie si une valeur est négative, si oui
@@ -105,70 +105,35 @@ public class DosRead {
     /**
      * Apply a low pass filter to the audio array
      * Fc = (1/2n)*FECH
-     * f_c = (1/2n)*44100
      *
      * @param n the number of samples to average
      */
 
-    //private LPFilter1 lpFilter1 = new LPFilter1();
-    //private LPFilter2 lpFilter2 = new LPFilter2();
-    // Choix du filtre.
-    public void audioLPFilter(int n) {
-        //double cutoffFreq = 0.5 / n * sampleRate;
-        double[] inputSignal = audio.clone();
-        double Gmax = Double.NEGATIVE_INFINITY;
-        double Gmax_3dB = 0;
-        double cutoffFrequency = 0;
-        for (int i = 0; i < inputSignal.length; i++) {
-            double s_f = audio[i]; // Amplitude de la sinusoïde en sortie du filtre
-            double e_f = Math.abs(inputSignal[i]); // Amplitude de la sinusoïde en entrée du filtre
-            double currentGain = 20 * Math.log10(s_f / e_f);
-            if (currentGain > Gmax) {
-                Gmax = currentGain;
-            }
-            if (Gmax - currentGain <= 3 && Gmax_3dB == 0) {
-                Gmax_3dB = currentGain;
-                cutoffFrequency = i;
-            }
-        }
-        // Apply low-pass filter
-        for (int i = n; i < audio.length; i++) {
-            double sum = 0;
-            // Calculate the average of the previous n samples and the current sample
-            for (int j = i - n; j <= i; j++) {
-                sum += audio[j];
-            }
-            // Calculate the average
-            double average = sum / (n + 1);
-            // Replace the current sample with the average only if the frequency is below the cutoff frequency
-            //double currentFreq = (i > 0) ? Math.abs(audio[i] - audio[i - 1]) * sampleRate : 0;
-            if (audio[i] >= cutoffFrequency) {
-                audio[i] = average;
-            }
-        }
-    }
     private LPFilter1 lpFilter1 = new LPFilter1();
-    //private LPFilter2 lpFilter2 = new LPFilter2();
+    private LPFilter2 lpFilter2 = new LPFilter2();
     // Choix du filtre.
-    public double LPFilteraa(int n) {
-        double[] inputSignal = audio.clone();
-        double Gmax = Double.NEGATIVE_INFINITY;
-        double Gmax_3dB = 0;
-        double cutoffFrequency = 0;
-        for (int i = 0; i < inputSignal.length; i++) {
-            double s_f = audio[i]; // Amplitude de la sinusoïde en sortie du filtre
-            double e_f = Math.abs(inputSignal[i]); // Amplitude de la sinusoïde en entrée du filtre
-            double currentGain = 20 * Math.log10(s_f / e_f);
-            if (currentGain > Gmax) {
-                Gmax = currentGain;
+    public double LPFilter(int n) {
+        double[] filteredAudio = new double[audio.length];
+        
+        // Calculating the average of 'n' samples around each sample
+        for (int i = 0; i < audio.length; i++) {
+            double sum = 0.0;
+            int count = 0;
+            
+            // Summing up 'n' samples around the current sample
+            for (int j = Math.max(0, i - n / 2); j < Math.min(audio.length, i + n / 2); j++) {
+                sum += audio[j];
+                count++;
             }
-            if (Gmax - currentGain <= 3 && Gmax_3dB == 0) {
-                Gmax_3dB = currentGain;
-                cutoffFrequency = i;
-            }
+            
+            // Calculating the average
+            filteredAudio[i] = sum / count;
         }
-        //On récupère la fréquence de coupure
-        return cutoffFrequency;
+        
+        // Replacing the original audio array with the filtered one
+        audio = filteredAudio;
+        return 0;
+    
     }
 
     /**
@@ -200,7 +165,6 @@ public class DosRead {
                 outputBits[i] = 0;
             }
         }
-        //System.out.println("Contenu du tableau outputBitsAAAA : " + Arrays.toString(outputSignal));
     }
 
 
@@ -211,18 +175,17 @@ public class DosRead {
      */
     public void decodeBitsToChar() {
         boolean corresp = true;
-        //System.out.println("Contenu du tableau outputBits : " + Arrays.toString(outputBits));
         for (int i = 0; i < START_SEQ.length; i++) {
             if (outputBits[i] != START_SEQ[i]) {
                 corresp = false;
                 System.out.println("START_SEQ ne correspond pas " + i);
                 System.out.println("outputBits[" + i + "] = " + outputBits[i]);
                 System.out.println("START_SEQ[" + i + "] = " + START_SEQ[i]);
-                //break;  // Sortir de la boucle dès qu'une non-correspondance est trouvée
+                break;  // Sortir de la boucle dès qu'une non-correspondance est trouvée
             }
         }
+
         if (corresp) {
-            //System.out.println("Contenu du tableau outputBits : " + Arrays.toString(outputBits));
             int nbDeCaractere = (outputBits.length - START_SEQ.length) / 8;
             //on retire la longueur de la séquence du début pour avoir
             // le nombre de caractères et on divise par 8 car chaque caractère est codé sur 8 bits
@@ -277,14 +240,13 @@ public class DosRead {
         StdDraw.setPenColor(StdDraw.BLACK);
         StdDraw.setCanvasSize(1280, 720);
         StdDraw.setXscale(start, stop);
-        StdDraw.setYscale(-10000, 50000);
+        StdDraw.setYscale(-100000, 100000);
         StdDraw.setTitle(title + " double[]");
         // Clear the background
         StdDraw.clear();
         // Set the pen color and thickness
         StdDraw.setPenRadius(0.005);
         // Draw the signal
-        StdDraw.enableDoubleBuffering();
         for (int i = start; i < stop && i < sig.length - 1; i++) {
             if ("line".equals(mode)) {
                 StdDraw.line(i, sig[i], i + 1, sig[i + 1]);
@@ -320,24 +282,26 @@ public class DosRead {
         // reverse the negative values
         dosRead.audioRectifier();
         // apply a low pass filter
-        //Choix du filtre passe-bas
-        //dosRead.audioLPFilter(44);
-        //---FILTRE 1----
-        double cutoffFrequency = dosRead.LPFilteraa(44);
-        dosRead.lpFilter1.lpFilter(dosRead.audio, dosRead.sampleRate, cutoffFrequency);
-        //---FILTRE 1----
+
+        // ? Choix du filtre passe-bas
+        // // Filtre par défaut
+        // dosRead.LPFilter(200);
+
+        // //---FILTRE 1----
+        // dosRead.audio = dosRead.lpFilter1.lpFilter(dosRead.audio, 200);
+
         //---FILTRE 2----
-        //double cutoffFrequency = dosRead.LPFilter(44);
-        //dosRead.lpFilter2.lpFilter(dosRead.audio, dosRead.sampleRate, cutoffFrequency);
-        //---FILTRE 2----
+        dosRead.audio = dosRead.lpFilter2.lpFilter(dosRead.audio, 0.02);
+
+        
         // Resample audio data and apply a threshold to output only 0 & 1
-        dosRead.audioResampleAndThreshold(dosRead.sampleRate/BAUDS, 12000 ); //12000
+        dosRead.audioResampleAndThreshold(dosRead.sampleRate/BAUDS, 6000 ); // 12000 too high for sample - 6000 good for both
         dosRead.decodeBitsToChar();
         if (dosRead.decodedChars != null){
             System.out.print("Message décodé : ");
             printIntArray(dosRead.decodedChars);
         }
-        displaySig(dosRead.audio, 0, dosRead.audio.length-1, "line", "Signal audio");
+        displaySig(dosRead.audio, 0, 5000, "line", "Signal audio");
         // Close the file input stream
         try {
             dosRead.fileInputStream.close();

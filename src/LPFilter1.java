@@ -1,23 +1,31 @@
 public class LPFilter1 {
-
-    public double[] lpFilter(double[] inputSignal, double sampleFreq, double cutoffFreq) {
-        double[] outputSignal = new double[inputSignal.length];
-        int n = (int) (sampleFreq / 1000);
-        for (int i = n; i < inputSignal.length; i++) {
-            double sum = 0;
-            // Calculate the average of the previous n samples and the current sample
-            for (int j = i - n; j <= i; j++) {
-                sum += inputSignal[j];
-            }
-            // Calculate the average
-            double average = sum / (n + 1);
-            // Replace the current sample with the average only if the frequency is below the cutoff frequency
-            //double currentFreq = (i > 0) ? Math.abs(audio[i] - audio[i - 1]) * sampleRate : 0;
-            if (inputSignal[i] >= cutoffFreq) {
-                inputSignal[i] = average;
-            }
+    public double[] lpFilter(double[] audio, int n) {
+        if (audio == null || audio.length == 0) {
+            throw new IllegalStateException("Audio data array is uninitialized or empty.");
         }
 
-        return outputSignal;
+        if (n <= 0) {
+            throw new IllegalArgumentException("n should be greater than 0.");
+        }
+        
+        double[] filteredAudio = new double[audio.length];
+        
+        // Calculating the average of 'n' samples around each sample
+        for (int i = 0; i < audio.length; i++) {
+            double sum = 0.0;
+            int count = 0;
+            
+            // Summing up 'n' samples around the current sample
+            for (int j = Math.max(0, i - n / 2); j < Math.min(audio.length, i + n / 2); j++) {
+                sum += audio[j];
+                count++;
+            }
+            
+            // Calculating the average
+            filteredAudio[i] = sum / count;
+        }
+        
+        // Replacing the original audio array with the filtered one
+        return filteredAudio;
     }
 }
