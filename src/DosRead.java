@@ -3,6 +3,7 @@
  * S1-A1
  */
 
+
 import java.io.*;
 
 
@@ -31,20 +32,21 @@ public class DosRead {
             fileInputStream = new FileInputStream(path);
             fileInputStream.read(header);
             sampleRate = byteArrayToInt(header, 24, 32);
-            // on convertit les 4 octets (à partir de l'indice 24)
-            // en int pour avoir le taux d'échantillonnage ( 32 bits = 4 octets)
+            // Convert the 4 bytes (starting from index 24)
+            // to int to get the sampling rate (32 bits = 4 bytes)
             bitsPerSample = byteArrayToInt(header, 34, 16);
-            // on convertit les 2 octets (à partir de l'indice 34) permettant de récupérer
-            // le nombre de bits par échantillon
+            // Convert the 2 bytes (starting from index 34) to retrieve
+            // the number of bits per sample
             dataSize = byteArrayToInt(header, 40, 32);
-            // on convertit les 4 octets (à partir de l'indice 40) permettant de récupérer
-            // la taille du fichier
+            // Convert the 4 bytes (starting from index 40) to retrieve
+            // the size of the file
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
 
     /**
      * Helper method to convert a little-endian byte array to an integer
@@ -78,16 +80,16 @@ public class DosRead {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        audio = new double[dataSize]; // Car PCM entier(code1) sur 2 octets
-        for (int i = 0; i < (dataSize / 2) - 44; i++) { // on remplit le tableau audio avec les valeurs en int codées sur de 2 octets (16 bits)
-            if (byteArrayToInt(audioData, 44 + 2 * i, 16) > 32767) { // On remet les valeurs négatives à leur valeur d'origine
+        audio = new double[dataSize]; // Because PCM integer (code1) is 2 bytes
+        for (int i = 0; i < (dataSize / 2) - 44; i++) { // Fill the audio array with values in int coded on 2 bytes (16 bits)
+            if (byteArrayToInt(audioData, 44 + 2 * i, 16) > 32767) { // Reset negative values to their original value
                 audio[i] = byteArrayToInt(audioData, 44 + 2 * i, 16) - 65536;
             } else {
                 audio[i] = byteArrayToInt(audioData, 44 + 2 * i, 16);
             }
-            
         }
     }
+
 
     /**
      * Reverse the negative values of the audio array
@@ -98,9 +100,10 @@ public class DosRead {
                 audio[i] = -audio[i];
             }
         }
-        // on vérifie si une valeur est négative, si oui
-        // on récupère son opposé
+        // Check if a value is negative; if so,
+        // obtain its absolute value
     }
+
 
     /**
      * Apply a low pass filter to the audio array
@@ -112,27 +115,23 @@ public class DosRead {
     private LPFilter1 lpFilter1 = new LPFilter1();
     private LPFilter2 lpFilter2 = new LPFilter2();
     // Choix du filtre.
-    public double LPFilter(int n) {
+    public void LPFilter(int n) {
         double[] filteredAudio = new double[audio.length];
-        
         // Calculating the average of 'n' samples around each sample
         for (int i = 0; i < audio.length; i++) {
             double sum = 0.0;
             int count = 0;
-            
+
             // Summing up 'n' samples around the current sample
             for (int j = Math.max(0, i - n / 2); j < Math.min(audio.length, i + n / 2); j++) {
                 sum += audio[j];
                 count++;
             }
-            
             // Calculating the average
             filteredAudio[i] = sum / count;
         }
-        
         // Replacing the original audio array with the filtered one
         audio = filteredAudio;
-        return 0;
     
     }
 
@@ -143,22 +142,22 @@ public class DosRead {
      **/
     public void audioResampleAndThreshold(int period, double threshold) {
         double[] inputSignal = audio.clone();
-        // Initialise un tableau pour stocker les moyennes de chaque période.
+        // Initialize an array to store the averages of each period.
         double[] outputSignal = new double[inputSignal.length / period];
-        // Initialise un tableau pour stocker les résultats binaires (0 ou 1) en fonction du seuil.
+        // Initialize an array to store binary results (0 or 1) based on the threshold.
         outputBits = new int[inputSignal.length / period];
-        // Boucle principale parcourant chaque période.
+        // Main loop iterating through each period.
         for (int i = 0; i < inputSignal.length / period; i++) {
-            // Initialise la somme des échantillons de la période à zéro.
+            // Initialize the sum of samples within the period to zero.
             double sum = 0;
-            // Boucle interne parcourant les échantillons à l'intérieur de chaque sous-période.
-            for (int j = i * period; j < (i + 1) * period; j++) {
-                // Accumule les valeurs de la sous-période.
-                sum += inputSignal[j];
+            // Inner loop iterating through the samples inside each sub-period.
+            for (int j = 0; j < period; j++) {
+                // Accumulate values of the sub-period.
+                sum += inputSignal[i * period + j];
             }
-            // Calcule la moyenne des échantillons de la sous-période.
+            // Calculate the average of the samples in the sub-period.
             outputSignal[i] = sum / period;
-            // Applique un seuil.
+            // Apply a threshold.
             if (outputSignal[i] > threshold) {
                 outputBits[i] = 1;
             } else {
@@ -168,55 +167,56 @@ public class DosRead {
     }
 
 
+
     /**
      * Decode the outputBits array to a char array
      * The decoding is done by comparing the START_SEQ with the actual beginning of outputBits.
      * The next first symbol is the first bit of the first char.
      */
     public void decodeBitsToChar() {
-        boolean corresp = true;
+        boolean corresponds = true;
         for (int i = 0; i < START_SEQ.length; i++) {
             if (outputBits[i] != START_SEQ[i]) {
-                corresp = false;
-                System.out.println("START_SEQ ne correspond pas " + i);
+                corresponds = false;
+                System.out.println("START_SEQ does not correspond at index " + i);
                 System.out.println("outputBits[" + i + "] = " + outputBits[i]);
                 System.out.println("START_SEQ[" + i + "] = " + START_SEQ[i]);
-                break;  // Sortir de la boucle dès qu'une non-correspondance est trouvée
+                break;  // Exit the loop as soon as a mismatch is found
             }
         }
 
-        if (corresp) {
-            int nbDeCaractere = (outputBits.length - START_SEQ.length) / 8;
-            //on retire la longueur de la séquence du début pour avoir
-            // le nombre de caractères et on divise par 8 car chaque caractère est codé sur 8 bits
-            decodedChars = new char[nbDeCaractere+1];
-            // Création du tableau contenant les caractères décodés
-            // On parcourt outPutsBits, en commencant par le deuxièmes octets
-            //On fait alors la conversion de binaire à décimal en utilisant
-            // l'indice et l'exposant.
-            for (int i = 1; i <= nbDeCaractere; i++) {
-                int caractere = 0;
+        if (corresponds) {
+            int numberOfCharacters = (outputBits.length - START_SEQ.length) / 8;
+            // Subtract the length of the start sequence to get
+            // the number of characters, and divide by 8 since each character is coded on 8 bits
+            decodedChars = new char[numberOfCharacters + 1];
+            // Create an array to store the decoded characters
+            // Iterate through outputBits, starting from the second byte
+            // Convert binary to decimal using the index and exponent.
+            for (int i = 1; i <= numberOfCharacters; i++) {
+                int character = 0;
                 for (int j = 0; j < 8; j++) {
                     if (outputBits[8 * i + j] == 1) {
-                        caractere += Math.pow(2, j);
+                        character += Math.pow(2, j);
                     }
                 }
-                //On utilie la valeur décimal comme code ASCII
-                // pour récupérer le caractère et le stocker
-                // dans le tableau de caractère decodedChars.
-                decodedChars[i] = (char)caractere;
+                // Use the decimal value as ASCII code
+                // to retrieve the character and store it
+                // in the character array decodedChars.
+                decodedChars[i] = (char)character;
             }
         }
     }
+
 
     /**
      * Print the elements of an array
      * @param data the array to print
      */
     public static void printIntArray(char[] data) {
-        // On fait un affichage avec un espace entre chaque
-        //caractère comme vu dans l'exemple
-        //Message décodé : H e l l o   W o r l d   !
+        // Display with a space between each character,
+        // as seen in the example
+        // Decoded Message: H e l l o   W o r l d   !
         System.out.print(" ");
         for (int i = 0; i < data.length; i++) {
             System.out.print(" ");
@@ -225,6 +225,7 @@ public class DosRead {
         System.out.print(" ");
         System.out.println("");
     }
+
 
 
     /**
@@ -236,6 +237,7 @@ public class DosRead {
      * @param title the title of the window
      */
     public static void displaySig(double[] sig, int start, int stop, String mode, String title){
+        StdDraw.enableDoubleBuffering();
         // Set up the drawing canvas
         StdDraw.setPenColor(StdDraw.BLACK);
         StdDraw.setCanvasSize(1280, 720);
@@ -258,6 +260,10 @@ public class DosRead {
         StdDraw.show();
     }
 
+    /**
+     * Find the cutoff frequency of the low pass filter
+     * @return cutoffFrequency the cutoff frequency
+     */
 
     /**
      *  Un exemple de main qui doit pourvoir être exécuté avec les méthodes
@@ -283,17 +289,24 @@ public class DosRead {
         dosRead.audioRectifier();
         // apply a low pass filter
 
-        // ? Choix du filtre passe-bas
-        // // Filtre par défaut
-        // dosRead.LPFilter(200);
+        // ? Choice of low-pass filter
+        // Default filter
+        //dosRead.LPFilter(200);
 
-        // //---FILTRE 1----
-        // dosRead.audio = dosRead.lpFilter1.lpFilter(dosRead.audio, 200);
+        //---FILTRE 1----
+        Profiler.init();
+        Profiler.analyse(dosRead.lpFilter1::lpFilter, dosRead.audio, dosRead.sampleRate, 200);
+        Profiler.getGlobalTime();
+        dosRead.audio = dosRead.lpFilter1.lpFilter(dosRead.audio, dosRead.sampleRate, 200);
 
-        //---FILTRE 2----
-        dosRead.audio = dosRead.lpFilter2.lpFilter(dosRead.audio, 0.02);
 
-        
+        // //---FILTRE 2----
+        // Profiler.init();
+        // Profiler.analyse(dosRead.lpFilter2::lpFilter, dosRead.audio, dosRead.sampleRate, 0.02);
+        // Profiler.getGlobalTime();
+        // dosRead.audio = dosRead.lpFilter2.lpFilter(dosRead.audio, dosRead.sampleRate, 0.02);
+
+
         // Resample audio data and apply a threshold to output only 0 & 1
         dosRead.audioResampleAndThreshold(dosRead.sampleRate/BAUDS, 6000 ); // 12000 too high for sample - 6000 good for both
         dosRead.decodeBitsToChar();
