@@ -83,7 +83,7 @@ public class DosRead {
         audio = new double[dataSize]; // Because PCM integer (code1) is 2 bytes
         for (int i = 0; i < (dataSize / 2) - 44; i++) { // Fill the audio array with values in int coded on 2 bytes (16 bits)
             if (byteArrayToInt(audioData, 44 + 2 * i, 16) > 32767) { // Reset negative values to their original value
-                audio[i] = byteArrayToInt(audioData, 44 + 2 * i, 16) - 65536;
+                audio[i] = byteArrayToInt(audioData, 44 + 2 * i, 16) - (double)65536;
             } else {
                 audio[i] = byteArrayToInt(audioData, 44 + 2 * i, 16);
             }
@@ -128,7 +128,8 @@ public class DosRead {
                 count++;
             }
             // Calculating the average
-            filteredAudio[i] = sum / count;
+            if(count != 0)
+                filteredAudio[i] = sum / count;
         }
         // Replacing the original audio array with the filtered one
         audio = filteredAudio;
@@ -251,7 +252,7 @@ public class DosRead {
         // Draw the signal
         for (int i = start; i < stop && i < sig.length - 1; i++) {
             if ("line".equals(mode)) {
-                StdDraw.line(i, sig[i], i + 1, sig[i + 1]);
+                StdDraw.line(i, sig[i], (double)i + 1, sig[i + 1]);
             } else if ("point".equals(mode)) {
                 StdDraw.point(i, sig[i]);
             }

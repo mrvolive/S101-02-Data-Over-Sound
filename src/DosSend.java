@@ -224,12 +224,6 @@ public class DosSend {
             }
         }
 
-        // // Affichage des bits modulés
-        // System.out.println("[ ");
-        // for (int i = 0; i < dataMod.length; i++) {
-        //     System.out.print(dataMod[i] + " ");
-        // }
-
     }
 
     /**
