@@ -212,8 +212,7 @@ public class DosSend {
         // La fréquence d'échantillonnage est de 44100Hz (FECH)
 
         int samplesPerBit = FECH / BAUDS;
-        dataMod = new double[bits.length * samplesPerBit];    
-        double amplitudeMax = 1.0;// Amplitude pour le bit 1
+        dataMod = new double[bits.length * samplesPerBit];
         double powerFactorOut = 4.0; // Facteur pour rendre la transition plus brusque
         double powerFactorIn = 0.1; // Facteur pour rendre la transition plus brusque
         
@@ -222,10 +221,10 @@ public class DosSend {
                 double amplitude;
                 if (bits[i] == 1) {
                     // Fade-in brusque sur les bits à 1
-                    amplitude = Math.pow(((double)j / samplesPerBit), powerFactorIn) * amplitudeMax;
+                    amplitude = Math.pow(((double)j / samplesPerBit), powerFactorIn);
                 } else if (bits[i] == 0 && bits[i-1] == 1) {
                     // Fade-out doux sur les bits à 0 après un bit à 1
-                    amplitude = Math.pow(((double)(samplesPerBit - j) / samplesPerBit), powerFactorOut) * amplitudeMax;
+                    amplitude = Math.pow(((double)(samplesPerBit - j) / samplesPerBit), powerFactorOut);
                 }
                 else {
                     // Pas de signal sur les bits à 0 n'étant pas précédés d'un bit à 1

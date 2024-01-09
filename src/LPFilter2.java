@@ -3,7 +3,7 @@ public class LPFilter2 {
      /**
      * Apply an Exponential Moving Average Low-Pass Filter to the audio signal.
      * 
-     * @param cutOffFrequency The smoothing factor used in the EMA, between 0 and 1. A smaller alpha means more smoothing (lower cutoff frequency).
+     * @param cutOffFrequency The smoothing factor used in the EMA, between 0 and 1. A smaller value means more smoothing (lower cutoff frequency).
      */
      public double[] lpFilter(double[] inputSignal,double sampleFreq,double cutoffFreq) {
         if (inputSignal == null || inputSignal.length == 0) {
