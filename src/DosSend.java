@@ -212,15 +212,28 @@ public class DosSend {
         // La fréquence d'échantillonnage est de 44100Hz (FECH)
 
         int samplesPerBit = FECH / BAUDS;
-        dataMod = new double[bits.length * samplesPerBit];
+        dataMod = new double[bits.length * samplesPerBit];    
+        double amplitudeMax = 1.0;// Amplitude pour le bit 1
+        double powerFactorOut = 4.0; // Facteur pour rendre la transition plus brusque
+        double powerFactorIn = 0.1; // Facteur pour rendre la transition plus brusque
         
         for (int i = 0; i < bits.length; i++) {
             for (int j = 0; j < samplesPerBit; j++) {
+                double amplitude;
                 if (bits[i] == 1) {
-                    dataMod[(i * samplesPerBit) + j] = Math.sin(2 * Math.PI * FP * j / FECH);
-                } else {
-                    dataMod[(i * samplesPerBit) + j] = 0;
+                    // Fade-in brusque sur les bits à 1
+                    amplitude = Math.pow(((double)j / samplesPerBit), powerFactorIn) * amplitudeMax;
+                } else if (bits[i] == 0 && bits[i-1] == 1) {
+                    // Fade-out doux sur les bits à 0 après un bit à 1
+                    amplitude = Math.pow(((double)(samplesPerBit - j) / samplesPerBit), powerFactorOut) * amplitudeMax;
                 }
+                else {
+                    // Pas de signal sur les bits à 0 n'étant pas précédés d'un bit à 1
+                    amplitude = 0.0;
+                }
+                // Générer l'échantillon en appliquant l'amplitude calculée précédemment
+                // La formule est celle d'une sinusoïde de fréquence FP
+                dataMod[(i * samplesPerBit) + j] = amplitude * Math.sin(2 * Math.PI * FP * j / FECH);
             }
         }
 
@@ -238,7 +251,7 @@ public class DosSend {
     public static void displaySig(double[] sig, int start, int stop, String mode, String title) {
         // Set up the drawing canvas
         StdDraw.enableDoubleBuffering();
-        StdDraw.setCanvasSize(1280, 720);
+        StdDraw.setCanvasSize(1800, 720);
         StdDraw.setXscale(start, stop);
         StdDraw.setYscale(-1, 1);
         StdDraw.setTitle(title + " double[]");
@@ -252,7 +265,7 @@ public class DosSend {
         // Draw the signal
         for (int i = start; i < stop && i < sig.length - 1; i++) {
             if ("line".equals(mode)) {
-                StdDraw.line(i, sig[i], i + 1, sig[i + 1]);
+                StdDraw.line(i, sig[i], (double)i + 1, sig[i + 1]);
             } else if ("point".equals(mode)) {
                 StdDraw.point(i, sig[i]);
             }
@@ -274,32 +287,47 @@ public class DosSend {
      */
     public static void displaySig(List<double[]> listOfSigs, int start, int stop, String mode, String title) {
         // Set up the drawing canvas
-        StdDraw.setCanvasSize(1600, 1000);
+        StdDraw.enableDoubleBuffering();
+        StdDraw.setCanvasSize(1900, 800);
         StdDraw.setXscale(start, stop);
-        StdDraw.setYscale(-1, 1);
+        StdDraw.setYscale(-50000, 50000);
         StdDraw.setTitle(title + " List<double[]>");
 
         // Clear the background
         StdDraw.clear();
 
+        // Dessiner l'axe des abscisses
+        StdDraw.setPenColor(StdDraw.BLACK);
+        StdDraw.setPenRadius(0.005);
+        StdDraw.line(start, 0, stop, 0);
+
+        // Marquer les valeurs temporelles sur l'axe des abscisses
+        int interval = (stop - start) / 10;
+        for (int i = start; i <= stop; i += interval) {
+            StdDraw.text(i, -5000, String.valueOf(i));
+            StdDraw.line(i, -1000, i, 1000);
+        }
+        
+
         // Set the pen color and thickness
         StdDraw.setPenRadius(0.005);
+        StdDraw.setPenColor(StdDraw.BOOK_RED);
 
         // Draw each signal in the list
-        for (double[] sig : listOfSigs) {
+        for (double[] sig : listOfSigs) { 
             for (int i = start; i < stop && i < sig.length - 1; i++) {
                 if ("line".equals(mode)) {
-                    StdDraw.line(i, sig[i], i + 1, sig[i + 1]);
+                    StdDraw.line(i, sig[i], (double)i + 1, sig[i + 1]);
                 } else if ("point".equals(mode)) {
                     StdDraw.point(i, sig[i]);
                 }
             }
+            StdDraw.setPenColor(StdDraw.BLUE);
         }
 
-        // Show the drawing on screen
         StdDraw.show();
 
-        // ! we never generate multiple signals
+        //! We never generate multiple signals
     }
 
     public static void main(String[] args) {
@@ -324,6 +352,6 @@ public class DosSend {
         System.out.println();
 
         // exemple d'affichage du signal modulé dans une fenêtre graphique
-        displaySig(dosSend.dataMod, 1000, 3000, "line", "Signal modulé");
+        displaySig(dosSend.dataMod, 0, 3000, "line", "Signal modulé");
     }
 }

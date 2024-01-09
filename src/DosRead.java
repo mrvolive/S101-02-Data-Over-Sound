@@ -5,6 +5,7 @@
 
 
 import java.io.*;
+import java.util.List;
 
 
 public class DosRead {
@@ -80,7 +81,7 @@ public class DosRead {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        audio = new double[dataSize]; // Because PCM integer (code1) is 2 bytes
+        audio = new double[dataSize];
         for (int i = 0; i < (dataSize / 2) - 44; i++) { // Fill the audio array with values in int coded on 2 bytes (16 bits)
             if (byteArrayToInt(audioData, 44 + 2 * i, 16) > 32767) { // Reset negative values to their original value
                 audio[i] = byteArrayToInt(audioData, 44 + 2 * i, 16) - (double)65536;
@@ -241,7 +242,7 @@ public class DosRead {
         StdDraw.enableDoubleBuffering();
         // Set up the drawing canvas
         StdDraw.setPenColor(StdDraw.BLACK);
-        StdDraw.setCanvasSize(1280, 720);
+        StdDraw.setCanvasSize(1280, 1440);
         StdDraw.setXscale(start, stop);
         StdDraw.setYscale(-100000, 100000);
         StdDraw.setTitle(title + " double[]");
@@ -259,12 +260,65 @@ public class DosRead {
         }
         // Show the drawing on screen
         StdDraw.show();
+
+        // Draw the original signal below the first one
+        StdDraw.setPenColor(StdDraw.RED);
+        StdDraw.setPenRadius(0.005);
+        StdDraw.setYscale(-100000, 100000);
+        
+        // Draw the signal
+        for (int i = start; i < stop && i < sig.length - 1; i++) {
+            if ("line".equals(mode)) {
+                StdDraw.line(i, sig[i], (double)i + 1, sig[i + 1]);
+            } else if ("point".equals(mode)) {
+                StdDraw.point(i, sig[i]);
+            }
+        }
     }
 
-    /**
-     * Find the cutoff frequency of the low pass filter
-     * @return cutoffFrequency the cutoff frequency
-     */
+    public static void displaySig(List<double[]> listOfSigs, int start, int stop, String mode, String title) {
+        // Set up the drawing canvas
+        StdDraw.enableDoubleBuffering();
+        StdDraw.setCanvasSize(1900, 800);
+        StdDraw.setXscale(start, stop);
+        StdDraw.setYscale(-50000, 50000);
+        StdDraw.setTitle(title + " List<double[]>");
+
+        // Clear the background
+        StdDraw.clear();
+
+        // Dessiner l'axe des abscisses
+        StdDraw.setPenColor(StdDraw.BLACK);
+        StdDraw.setPenRadius(0.005);
+        StdDraw.line(start, 0, stop, 0);
+
+        // Marquer les valeurs temporelles sur l'axe des abscisses
+        int interval = (stop - start) / 10;
+        for (int i = start; i <= stop; i += interval) {
+            StdDraw.text(i, -5000, String.valueOf(i));
+            StdDraw.line(i, -1000, i, 1000);
+        }
+        
+
+        // Set the pen color and thickness
+        StdDraw.setPenRadius(0.005);
+        StdDraw.setPenColor(StdDraw.BOOK_RED);
+
+        // Draw each signal in the list
+        for (double[] sig : listOfSigs) { 
+            for (int i = start; i < stop && i < sig.length - 1; i++) {
+                if ("line".equals(mode)) {
+                    StdDraw.line(i, sig[i], (double)i + 1, sig[i + 1]);
+                } else if ("point".equals(mode)) {
+                    StdDraw.point(i, sig[i]);
+                }
+            }
+            StdDraw.setPenColor(StdDraw.BLUE);
+        }
+
+        // Show the drawing on screen
+        StdDraw.show();
+    }
 
     /**
      *  Un exemple de main qui doit pourvoir être exécuté avec les méthodes
@@ -286,19 +340,22 @@ public class DosRead {
         System.out.println("\tData Size: " + dosRead.dataSize + " bytes");
         // Read the audio data
         dosRead.readAudioDouble();
+        double[] audioOriginal = dosRead.audio.clone();
+        List<double[]> listOfSigs = new java.util.ArrayList<>();
+        listOfSigs.add(audioOriginal);
         // reverse the negative values
         dosRead.audioRectifier();
         // apply a low pass filter
 
         // ? Choice of low-pass filter
         // Default filter
-        //dosRead.LPFilter(200);
+        dosRead.LPFilter(44);
 
-        //---FILTRE 1----
-        Profiler.init();
-        Profiler.analyse(dosRead.lpFilter1::lpFilter, dosRead.audio, dosRead.sampleRate, 200);
-        Profiler.getGlobalTime();
-        dosRead.audio = dosRead.lpFilter1.lpFilter(dosRead.audio, dosRead.sampleRate, 200);
+        // //---FILTRE 1----
+        // Profiler.init();
+        // Profiler.analyse(dosRead.lpFilter1::lpFilter, dosRead.audio, dosRead.sampleRate, 200);
+        // Profiler.getGlobalTime();
+        // dosRead.audio = dosRead.lpFilter1.lpFilter(dosRead.audio, dosRead.sampleRate, 200);
 
 
         // //---FILTRE 2----
@@ -315,7 +372,9 @@ public class DosRead {
             System.out.print("Message décodé : ");
             printIntArray(dosRead.decodedChars);
         }
-        displaySig(dosRead.audio, 0, 5000, "line", "Signal audio");
+        listOfSigs.add(dosRead.audio);
+        displaySig(listOfSigs, 0, 5000, "line", "Signal audio");
+
         // Close the file input stream
         try {
             dosRead.fileInputStream.close();
