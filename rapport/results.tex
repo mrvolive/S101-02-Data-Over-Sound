@@ -2,64 +2,118 @@
 
 \section{Speed}
 
-\subsection{Values}
+\subsection{LPFilter's Speed to Filtering Strength}
 
-\begin{itemize}
-	\item : 1000 = 0 0 = 1
+\begin{table}[htbp]
+	\centering
+	\begin{tabularx}{\textwidth}{|X|X|X|}
+		\hline
+		\textbf{Cut Off Frequency Hz} & \textbf{SMA processing time (ms)} & \textbf{EMA processing time (ms)} \\ \hline
+		\textbf{20} & 2788 & 947 \\ \hline
+		\textbf{500} & 11980 & 972 \\ \hline
+		\textbf{1000} & 26930 & 972 \\ \hline
+	\end{tabularx}
+	\caption{Processing Time Comparison}
+\end{table}
 
-\end{itemize}
 
-\subsection{LPFilter1's Speed}
+\begin{figure}[!h]
+	\begin{center}
+		\includegraphics[width=15cm]{images/GraphSpeedtoFilteringStrength.png}
+	\end{center}
+	\caption{Processing speed of each filter as their cut off frequency decreases}
+\end{figure}
 
-\subsubsection{Short File}
+\subsection{LPFilter's Speed to Data Length}
 
-\subsubsection{Medium File}
+\begin{figure}[!h]
+	\begin{center}
+		\includegraphics[width=15cm]{images/GraphSpeedtoLength.png}
+	\end{center}
+	\caption{Processing speed of each filters as the length of the data increases}
+\end{figure}
 
-\subsubsection{Long File}
+\begin{table}[!h]
+	\centering
+	\begin{tabularx}{\textwidth}{|X|X|X|X|}
+		\hline
+		\textbf{File} & \textbf{Characters} & \textbf{SMA processing time (ms)} & \textbf{EMA processing time (ms)} \\ \hline
+		\textbf{Short File} & \textbf{13} & 14 & 3 \\ \hline
+		\textbf{Medium File} & \textbf{641} & 301 & 104 \\ \hline
+		\textbf{Long File} & \textbf{6307} & 2788 & 947 \\ \hline
+	\end{tabularx}
+	\caption{Processing Time Comparison}
+\end{table}
 
-\subsection{LPFilter2's Speed}
+\subsection{LPFilter's Efficiency}
 
-\subsubsection{Short File}
+\begin{table}[!h]
+	\centering
+	\begin{tabularx}{\textwidth}{|X|X|X|X|}
+		\hline
+		\textbf{File} & \textbf{Characters} & \textbf{SMA processing time (ms)} & \textbf{EMA processing time (ms)} \\ \hline
+		\textbf{Short File} & \textbf{13} & 14 & 3 \\ \hline
+		\textbf{Medium File} & \textbf{641} & 301 & 104 \\ \hline
+		\textbf{Long File} & \textbf{6307} & 2788 & 947 \\ \hline
+	\end{tabularx}
+	\caption{Processing Time Comparison}
+\end{table}
 
-\subsubsection{Medium File}
+\newpage
 
-\subsubsection{Long File}
+\subsection{LPFilter's Output}
 
-\section{Accuracy}
+\subsubsection{Filters Frequency Response and efficiency}
 
-\subsection{LPFilter1's Accuracy}
+\begin{figure}[!h]
+	\begin{center}
+		\includegraphics[width=15cm]{images/LP1600.png}
+	\end{center}
+	\caption{\textbf{SMA} Filter output in blue for a cut off frequency of \textbf{20Hz}}
+\end{figure}
 
-\subsubsection{Low n}
-% Value sent in cut off frequency is the number of points to average
-% Lower n means less filtering
+\begin{figure}[!h]
+	\begin{center}
+		\includegraphics[width=15cm]{images/LP240.png}
+	\end{center}
+	\caption{\textbf{EMA} Filter output in blue for a cut off frequency of \textbf{20Hz}}
+\end{figure}
 
-\subsubsection{High n}
-% Value sent in cut off frequency is the number of points to average
-% Higher n means more filtering
+\begin{figure}[!h]
+	\begin{center}
+		\includegraphics[width=15cm]{images/LP116.png}
+	\end{center}
+	\caption{\textbf{SMA} Filter output in blue for a cut off frequency of \textbf{1kHz}}
+\end{figure}
 
-\subsection{LPFilter2's Accuracy}
+\begin{figure}[!h]
+	\begin{center}
+		\includegraphics[width=15cm]{images/LP21000.png}
+	\end{center}
+	\caption{\textbf{EMA} Filter output in blue for a cut off frequency of \textbf{1kHz}}
+\end{figure}
 
-\subsubsection{Low}
-% Lowering the cutoff frequency means averaging from less points
-% Lower value means more filtering
+\begin{figure}[!h]
+	\begin{center}
+		\includegraphics[width=15cm]{images/EMA20d1371.png}
+	\end{center}
+	\caption{\textbf{EMA} Delta of the signal amplitude for a cut off frequency value of 20Hz : 1371}
+\end{figure}
 
-\subsubsection{high}
-% Upping the cutoff frequency means averaging from more points
-% Higher value means less filtering
+\begin{figure}[!h]
+	\begin{center}
+		\includegraphics[width=15cm]{images/EMA500d6425.png}
+	\end{center}
+	\caption{\textbf{EMA} Delta of the signal amplitude for a cut off frequency value of 500Hz : 6425}
+\end{figure}
 
-On the first plot, we have the input that is going into the moving average filter. The input is noisy
-and our objective is to reduce the noise. The next figure is the output response of a 3-point
-Moving Average filter. It can be deduced from the figure that the 3-point Moving Average filter
-has not done much in filtering out the noise. We increase the filter taps to 51-points and we can
-see that the noise in the output has reduced a lot, which is depicted in next figure.
-Frequency Response of Moving Average Filters of various lengths
-We increase the taps further to 101 and 501 and we can observe that even-though the noise is
-almost zero, the transitions are blunted out drastically (observe the slope on the either side of the
-signal and compare them with the ideal brick wall transition in our input).
-Frequency Response:
-From the frequency response it can be asserted that the roll-off is very slow and the stop band
-attenuation is not good. Given this stop band attenuation,clearly, the moving average filter
-cannot separate one band of frequencies from another. As we know that a good performance in
-the time domain results in poor performance in the frequency domain, and vice versa. 
-In short, the moving average is an exceptionally good smoothing filter (the action in the time
-domain), but an exceptionally bad low-pass filter (the action in the frequency domain)
+\begin{figure}[!h]
+	\begin{center}
+		\includegraphics[width=15cm]{images/EMA1000d11417.png}
+	\end{center}
+	\caption{\textbf{EMA} Delta of the signal amplitude for a cut off frequency value of 1000Hz : 11417}
+\end{figure}
+
+
+
+

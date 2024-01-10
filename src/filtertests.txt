@@ -1,0 +1,92 @@
+[[SMA]]
+
+[oli@oli-arch src]$ java DosRead2 DosOok_message.wav
+Fichier audio: DosOok_message.wav
+        Sample Rate: 44100 Hz
+        Bits per Sample: 16 bits
+        Data Size: 98784 bytes
+7,081ms elapsed
+Filter 1 : SMA
+n = 4
+cutoffFreq =20
+threshold =11000
+sampleInterval = 441
+sampleIndex0 = 332
+sampleIndex1 = 773
+START_SEQ does not correspond at index 0
+outputBits[0] = 0
+START_SEQ[0] = 1
+
+[oli@oli-arch src]$ java DosRead2 DosOok_message.wav
+Fichier audio: DosOok_message.wav
+        Sample Rate: 44100 Hz
+        Bits per Sample: 16 bits
+        Data Size: 98784 bytes
+25,35ms elapsed
+Filter 1 : SMA
+n = 100
+cutoffFreq =500
+threshold =11000
+sampleInterval = 441
+sampleIndex0 = 332
+sampleIndex1 = 773
+Message décodé :  Hello World ! 
+
+[[EMA]]
+
+[oli@oli-arch src]$ java DosRead2 DosOok_message.wav
+Fichier audio: DosOok_message.wav
+        Sample Rate: 44100 Hz
+        Bits per Sample: 16 bits
+        Data Size: 98784 bytes
+1,403ms elapsed
+Filter 2 : EMA
+cutoffFreq =20
+threshold =10000
+sampleInterval = 441
+sampleIndex0 = 340
+sampleIndex1 = 781
+Message décodé :  Hello World ! 
+
+[oli@oli-arch src]$ java DosRead2 DosOok_message.wav
+Fichier audio: DosOok_message.wav
+        Sample Rate: 44100 Hz
+        Bits per Sample: 16 bits
+        Data Size: 98784 bytes
+5,822ms elapsed
+Filter 2 : EMA
+cutoffFreq =500
+threshold =11000
+sampleInterval = 441
+sampleIndex0 = 332
+sampleIndex1 = 773
+Message décodé :  Hello World ! 
+
+[oli@oli-arch src]$ java DosRead2 DosOok_message.wav
+Fichier audio: DosOok_message.wav
+        Sample Rate: 44100 Hz
+        Bits per Sample: 16 bits
+        Data Size: 98784 bytes
+5,171ms elapsed
+Filter 2 : EMA
+cutoffFreq =1000
+threshold =11000
+sampleInterval = 441
+sampleIndex0 = 332
+sampleIndex1 = 773
+Message décodé :  Hello World !
+
+Fichier audio: DosOok_message.wav
+        Sample Rate: 44100 Hz
+        Bits per Sample: 16 bits
+        Data Size: 98784 bytes
+8,125ms elapsed
+Filter 2 : EMA
+cutoffFreq =2000
+threshold =11000
+sampleInterval = 441
+sampleIndex0 = 332
+sampleIndex1 = 773
+START_SEQ does not correspond at index 0
+outputBits[0] = 0
+START_SEQ[0] = 1

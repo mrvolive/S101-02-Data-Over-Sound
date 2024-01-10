@@ -1,5 +1,5 @@
 /**
- * KHERZA Yahia
+ * MARAVAL Olivier et KHERZA Yahia
  * S1-A1
  * Groupe 7
  */
@@ -13,13 +13,19 @@ public class DosRead2 {
     static final int FP = 1000;
     static final int BAUDS = 100;
     static final int[] START_SEQ = {1, 0, 1, 0, 1, 0, 1, 0};
+    static int threshold = 11000;
     FileInputStream fileInputStream;
+    static List<Integer> sampleIndexList = new java.util.ArrayList<>();
     int sampleRate = 44100;
     int bitsPerSample;
     int dataSize;
     double[] audio;
     int[] outputBits;
     char[] decodedChars;
+    // higher cutoffFreq = less filtering
+    static int cutoffFreq = 20; //20 - 500 - 1000
+    static double n = 90; // 600 - 300 - 90
+    static int readingOffset = 332; // offset de 332 pour prendre le 3/4 des symboles mais rater un pic de 1
 
     /**
      * Constructor that opens the FIlEInputStream
@@ -155,8 +161,10 @@ public class DosRead2 {
         // Sample the audio at regular intervals and apply threshold
         for (int i = 0; i < numOutputBits; i++) {
             // Find the sample index by skipping the necessary number of samples
-            int sampleIndex = (i+1) * sampleInterval;
-
+            int sampleIndex = ((i) * sampleInterval)+readingOffset; 
+            if (sampleIndex < 1000)
+                System.out.println("sampleIndex" + i + " = " + sampleIndex);
+            sampleIndexList.add(sampleIndex);
             // Check if the sample index is within the bounds of the audio array
             if (sampleIndex < audio.length) {
                 // Apply threshold to determine if the bit is 0 or 1
@@ -287,12 +295,17 @@ public class DosRead2 {
         StdDraw.setPenColor(StdDraw.BLACK);
         StdDraw.setPenRadius(0.005);
         StdDraw.line(start, 0, stop, 0);
+        StdDraw.line(-50000, threshold, 50000, threshold);
 
         // Marquer les valeurs temporelles sur l'axe des abscisses
         int interval = (stop - start) / 10;
         for (int i = start; i <= stop; i += interval) {
             StdDraw.text(i, -5000, String.valueOf(i));
             StdDraw.line(i, -1000, i, 1000);
+        }
+        StdDraw.setPenColor(StdDraw.GRAY);
+        for (int i = 0; i < sampleIndexList.size(); i++) {
+            StdDraw.line(sampleIndexList.get(i), -50000, sampleIndexList.get(i), 50000);
         }
         
 
@@ -311,6 +324,30 @@ public class DosRead2 {
             }
             StdDraw.setPenColor(StdDraw.BLUE);
         }
+
+        // Calculate the delta between max and min values of the second signal between sig[start] and sig[stop]
+        double min = listOfSigs.get(1)[start];
+        double max = listOfSigs.get(1)[start];
+        for (int i = start; i < stop && i < listOfSigs.get(1).length - 1; i++) {
+            if (listOfSigs.get(1)[i] < min) {
+                min = listOfSigs.get(1)[i];
+            }
+            if (listOfSigs.get(1)[i] > max) {
+                max = listOfSigs.get(1)[i];
+            }
+        }
+
+        // Draw lines along min and max
+        StdDraw.setPenColor(StdDraw.GREEN);
+        StdDraw.setPenRadius(0.002);
+        StdDraw.line(start, min, stop, min);
+        StdDraw.line(start, max, stop, max);
+
+        // Write the delta between min and max on the graph
+        StdDraw.setPenColor(StdDraw.BLACK);
+        StdDraw.textRight(stop, min, String.valueOf(max - min));
+
+
 
         // Show the drawing on screen
         StdDraw.show();
@@ -345,29 +382,36 @@ public class DosRead2 {
 
         // ? Choice of low-pass filter
 
-        //---FILTRE 1----
-        Profiler.init();
-        Profiler.analyse(dosRead2.lpFilter1::lpFilter, dosRead2.audio, dosRead2.sampleRate, 600);
-        Profiler.getGlobalTime();
-        dosRead2.audio = dosRead2.lpFilter1.lpFilter(dosRead2.audio, dosRead2.sampleRate, 600);
-
-
-        // //---FILTRE 2----
+        // //---FILTRE 1----
         // Profiler.init();
-        // Profiler.analyse(dosRead2.lpFilter2::lpFilter, dosRead2.audio, dosRead2.sampleRate,1000);
+        // Profiler.analyse(dosRead2.lpFilter1::lpFilter, dosRead2.audio, dosRead2.sampleRate, n);
         // Profiler.getGlobalTime();
-        // dosRead2.audio = dosRead2.lpFilter2.lpFilter(dosRead2.audio, dosRead2.sampleRate, 1000);
+        // dosRead2.audio = dosRead2.lpFilter1.lpFilter(dosRead2.audio, dosRead2.sampleRate, n);
+        // System.out.println("Filter 1 : SMA");
+        // System.out.println("n = " + n);
+
+        //---FILTRE 2----
+        Profiler.init();
+        Profiler.analyse(dosRead2.lpFilter2::lpFilter, dosRead2.audio, dosRead2.sampleRate,cutoffFreq);
+        Profiler.getGlobalTime();
+        dosRead2.audio = dosRead2.lpFilter2.lpFilter(dosRead2.audio, dosRead2.sampleRate, cutoffFreq);
+        System.out.println("Filter 2 : EMA");
+        System.out.println("cutoffFreq =" + cutoffFreq);
+
+
+  
+        System.out.println("threshold =" + threshold);
 
 
         // Resample audio data and apply a threshold to output only 0 & 1
-        dosRead2.audioResampleAndThreshold((int)(dosRead2.sampleRate)/BAUDS, 12000 ); // 12000 for LP1 - 12000 for LP2
+        dosRead2.audioResampleAndThreshold((int)(dosRead2.sampleRate)/BAUDS, threshold); // 12000 for LP1 - 12000 for LP2
         dosRead2.decodeBitsToChar();
         if (dosRead2.decodedChars != null){
             System.out.print("Message décodé : ");
             printIntArray(dosRead2.decodedChars);
         }
         listOfSigs.add(dosRead2.audio);
-        displaySig(listOfSigs, 0, 10000, "line", "Signal audio");
+        displaySig(listOfSigs, 221, 265, "line", "Signal audio");
         
 
         // Close the file input stream

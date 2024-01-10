@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Arch Linux) (preloaded format=pdflatex 2024.1.10)  10 JAN 2024 14:50
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Arch Linux) (preloaded format=pdflatex 2024.1.10)  10 JAN 2024 20:25
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1254,7 +1254,7 @@ Package caption Info: listings package is loaded.
 Package caption Info: End \AtBeginDocument code.
 \c@lstlisting=\count340
 (./title.tex
-<./images/InfoLogoQuadriH.png, id=151, 362.3136pt x 93.2283pt>
+<./images/InfoLogoQuadriH.png, id=99, 362.3136pt x 93.2283pt>
 File: ./images/InfoLogoQuadriH.png Graphic file (type png)
 <use ./images/InfoLogoQuadriH.png>
 Package pdftex.def Info: ./images/InfoLogoQuadriH.png  used on input line 5.
@@ -1287,68 +1287,147 @@ Chapter 1.
 
 ]
 Chapter 2.
-LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 1
-3.
+LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 9
+.
 (/usr/share/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 2022/07/10 v2.5l Standard LaTeX font definitions
 )
-(/usr/share/texmf-dist/tex/latex/base/latin1.def
-File: latin1.def 2021/02/14 v1.3d Input encoding file
-)
-(/usr/share/texmf-dist/tex/latex/base/latin1.def
-File: latin1.def 2021/02/14 v1.3d Input encoding file
-)
-Overfull \hbox (1.57217pt too wide) in paragraph at lines 27--28
+Overfull \hbox (1.57217pt too wide) in paragraph at lines 9--10
 \T1/cmr/m/n/12 The pro-gram will con-vert the in-put text into an au-dio sig-na
 l and save it as \T1/cmtt/m/n/12 DosOok_message.wav\T1/cmr/m/n/12 .
  []
 
-(/usr/share/texmf-dist/tex/latex/base/latin1.def
-File: latin1.def 2021/02/14 v1.3d Input encoding file
-)
-<images/StdDraw1.png, id=218, 993.7125pt x 610.53094pt>
-File: images/StdDraw1.png Graphic file (type png)
-<use images/StdDraw1.png>
-Package pdftex.def Info: images/StdDraw1.png  used on input line 44.
-(pdftex.def)             Requested size: 426.79134pt x 262.21576pt.
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
 [7
 
-] (/usr/share/texmf-dist/tex/latex/base/latin1.def
-File: latin1.def 2021/02/14 v1.3d Input encoding file
-)
-(/usr/share/texmf-dist/tex/latex/base/latin1.def
-File: latin1.def 2021/02/14 v1.3d Input encoding file
-)
-(/usr/share/texmf-dist/tex/latex/base/latin1.def
-File: latin1.def 2021/02/14 v1.3d Input encoding file
-)
+{/usr/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}]
+Overfull \hbox (4.79907pt too wide) in paragraph at lines 42--43
+[]\T1/cmr/m/n/12 The cal-cu-lates the time con-stant \T1/cmtt/m/n/12 rc \T1/cmr
+/m/n/12 us-ing the for-mula \T1/cmtt/m/n/12 1 / (cutoffFreq * 2 * Math.PI)\T1/c
+mr/m/n/12 .
+ []
+
+) (./results.tex [8] [9]
+Chapter 3.
+
+Underfull \hbox (badness 10000) in paragraph at lines 15--15
+[]|\T1/cmr/bx/n/12 SMA pro-cess-ing time
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 15--15
+[]|\T1/cmr/bx/n/12 EMA pro-cess-ing time
+ []
+
+<images/GraphSpeedtoFilteringStrength.png, id=170, 1078.0275pt x 467.7475pt>
+File: images/GraphSpeedtoFilteringStrength.png Graphic file (type png)
+<use images/GraphSpeedtoFilteringStrength.png>
+Package pdftex.def Info: images/GraphSpeedtoFilteringStrength.png  used on inpu
+t line 22.
+(pdftex.def)             Requested size: 426.79134pt x 185.18289pt.
+<images/GraphSpeedtoLength.png, id=171, 1074.0125pt x 468.75125pt>
+File: images/GraphSpeedtoLength.png Graphic file (type png)
+<use images/GraphSpeedtoLength.png>
+Package pdftex.def Info: images/GraphSpeedtoLength.png  used on input line 31.
+(pdftex.def)             Requested size: 426.79134pt x 186.27408pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<images/StdDraw2.png, id=241, 1475.5125pt x 696.35156pt>
-File: images/StdDraw2.png Graphic file (type png)
-<use images/StdDraw2.png>
-Package pdftex.def Info: images/StdDraw2.png  used on input line 85.
+
+Underfull \hbox (badness 10000) in paragraph at lines 44--44
+[]|\T1/cmr/bx/n/12 SMA pro-cess-ing
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 44--44
+[]|\T1/cmr/bx/n/12 EMA pro-cess-ing
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 58--58
+[]|\T1/cmr/bx/n/12 SMA pro-cess-ing
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 58--58
+[]|\T1/cmr/bx/n/12 EMA pro-cess-ing
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[10
+
+ <./images/GraphSpeedtoFilteringStrength.png>]
+<images/LP1600.png, id=179, 1475.5125pt x 696.35156pt>
+File: images/LP1600.png Graphic file (type png)
+<use images/LP1600.png>
+Package pdftex.def Info: images/LP1600.png  used on input line 70.
+(pdftex.def)             Requested size: 426.79134pt x 201.41612pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<images/LP240.png, id=180, 1475.5125pt x 696.35156pt>
+File: images/LP240.png Graphic file (type png)
+<use images/LP240.png>
+Package pdftex.def Info: images/LP240.png  used on input line 77.
 (pdftex.def)             Requested size: 426.79134pt x 201.41612pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[8 <./images/StdDraw1.png>] [9 <./images/StdDraw2.png>]) (./results.tex
-[10]
-Chapter 3.
-) (./discussion.tex [11
+<images/LP116.png, id=181, 1475.5125pt x 696.35156pt>
+File: images/LP116.png Graphic file (type png)
+<use images/LP116.png>
+Package pdftex.def Info: images/LP116.png  used on input line 84.
+(pdftex.def)             Requested size: 426.79134pt x 201.41612pt.
 
-{/usr/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}] [12]
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<images/LP21000.png, id=182, 1475.5125pt x 696.35156pt>
+File: images/LP21000.png Graphic file (type png)
+<use images/LP21000.png>
+Package pdftex.def Info: images/LP21000.png  used on input line 91.
+(pdftex.def)             Requested size: 426.79134pt x 201.41612pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<images/EMA20d1371.png, id=183, 1460.45625pt x 670.75594pt>
+File: images/EMA20d1371.png Graphic file (type png)
+<use images/EMA20d1371.png>
+Package pdftex.def Info: images/EMA20d1371.png  used on input line 98.
+(pdftex.def)             Requested size: 426.79134pt x 196.00853pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<images/EMA500d6425.png, id=184, 1460.45625pt x 670.75594pt>
+File: images/EMA500d6425.png Graphic file (type png)
+<use images/EMA500d6425.png>
+Package pdftex.def Info: images/EMA500d6425.png  used on input line 105.
+(pdftex.def)             Requested size: 426.79134pt x 196.00853pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<images/EMA1000d11417.png, id=185, 1460.45625pt x 670.75594pt>
+File: images/EMA1000d11417.png Graphic file (type png)
+<use images/EMA1000d11417.png>
+Package pdftex.def Info: images/EMA1000d11417.png  used on input line 112.
+(pdftex.def)             Requested size: 426.79134pt x 196.00853pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+) (./discussion.tex [11 <./images/GraphSpeedtoLength.png>] [12 <./images/LP1600
+.png> <./images/LP240.png>] [13 <./images/LP116.png> <./images/LP21000.png>]
+[14 <./images/EMA20d1371.png> <./images/EMA500d6425.png> <./images/EMA1000d1141
+7.png>]
 Chapter 4.
-) (./conclusion.tex [13
+) (./conclusion.tex [15
 
 ]
 Chapter 5.
-) [14
+) [16
 
 ] (./main.aux)
 
@@ -1357,43 +1436,34 @@ Package rerunfilecheck Warning: File `main.out' has changed.
 (rerunfilecheck)                or use package `bookmark'.
 
 Package rerunfilecheck Info: Checksums for `main.out':
-(rerunfilecheck)             Before: 7034017992ADF8CDE5C7A95DDA24DCA4;5504
-(rerunfilecheck)             After:  2D311A34687DBA01CA8811017735FB83;5596.
+(rerunfilecheck)             Before: 19807FEDC7701BE7BABA8DD723693B5D;4643
+(rerunfilecheck)             After:  61114C7615FD78EB2CCF7FA1B49BE99C;4490.
  ) 
 Here is how much of TeX's memory you used:
- 25381 strings out of 476025
- 464021 string characters out of 5796532
- 2065388 words of memory out of 5000000
- 45284 multiletter control sequences out of 15000+600000
- 527759 words of font info for 62 fonts, out of 8000000 for 9000
+ 25079 strings out of 476025
+ 461665 string characters out of 5796532
+ 1864388 words of memory out of 5000000
+ 45021 multiletter control sequences out of 15000+600000
+ 525910 words of font info for 59 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 99i,6n,133p,713b,1709s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 99i,10n,133p,797b,528s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-pdfTeX warning (dest): name{subsubsection.3.1.1.3} has been referenced but does
- not exist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsubsection.3.1.1.2} has been referenced but does
- not exist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsubsection.3.1.1.1} has been referenced but does
- not exist, replaced by a fixed one
+pdfTeX warning (dest): name{section.3.2} has been referenced but does not exist
+, replaced by a fixed one
 
 </usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></usr/share/tex
 mf-dist/fonts/type1/public/cm-super/sfbx1440.pfb></usr/share/texmf-dist/fonts/t
 ype1/public/cm-super/sfbx1728.pfb></usr/share/texmf-dist/fonts/type1/public/cm-
 super/sfbx2488.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfcc1440.
 pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfcc2074.pfb></usr/share
-/texmf-dist/fonts/type1/public/cm-super/sfrm0600.pfb></usr/share/texmf-dist/fon
-ts/type1/public/cm-super/sfrm1200.pfb></usr/share/texmf-dist/fonts/type1/public
-/cm-super/sfrm1440.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfti1
-440.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sftt1095.pfb></usr/s
-hare/texmf-dist/fonts/type1/public/cm-super/sftt1200.pfb>
-Output written on main.pdf (13 pages, 659839 bytes).
+/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/share/texmf-dist/fon
+ts/type1/public/cm-super/sfrm1440.pfb></usr/share/texmf-dist/fonts/type1/public
+/cm-super/sfti1440.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sftt1
+200.pfb>
+Output written on main.pdf (15 pages, 1530346 bytes).
 PDF statistics:
- 370 PDF objects out of 1000 (max. 8388607)
- 320 compressed objects within 4 object streams
- 80 named destinations out of 1000 (max. 500000)
- 316 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 291 PDF objects out of 1000 (max. 8388607)
+ 230 compressed objects within 3 object streams
+ 50 named destinations out of 1000 (max. 500000)
+ 247 words of extra memory for PDF output out of 10000 (max. 10000000)
 
