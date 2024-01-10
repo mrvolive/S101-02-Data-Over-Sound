@@ -1,6 +1,7 @@
-/** MARAVAL Olivier
+/**
  * KHERZA Yahia
  * S1-A1
+ * Groupe 7
  */
 
 
@@ -221,10 +222,8 @@ public class DosRead {
         // Decoded Message: H e l l o   W o r l d   !
         System.out.print(" ");
         for (int i = 0; i < data.length; i++) {
-            System.out.print(" ");
             System.out.print(data[i]);
         }
-        System.out.print(" ");
         System.out.println("");
     }
 
@@ -353,16 +352,16 @@ public class DosRead {
 
         // //---FILTRE 1----
         // Profiler.init();
-        // Profiler.analyse(dosRead.lpFilter1::lpFilter, dosRead.audio, dosRead.sampleRate, 200);
+        // Profiler.analyse(dosRead.lpFilter1::lpFilter, dosRead.audio, dosRead.sampleRate, 10);
         // Profiler.getGlobalTime();
-        // dosRead.audio = dosRead.lpFilter1.lpFilter(dosRead.audio, dosRead.sampleRate, 200);
+        // dosRead.audio = dosRead.lpFilter1.lpFilter(dosRead.audio, dosRead.sampleRate, 10);
 
 
         // //---FILTRE 2----
         // Profiler.init();
-        // Profiler.analyse(dosRead.lpFilter2::lpFilter, dosRead.audio, dosRead.sampleRate, 0.02);
+        // Profiler.analyse(dosRead.lpFilter2::lpFilter, dosRead.audio, dosRead.sampleRate, 200);
         // Profiler.getGlobalTime();
-        // dosRead.audio = dosRead.lpFilter2.lpFilter(dosRead.audio, dosRead.sampleRate, 0.02);
+        // dosRead.audio = dosRead.lpFilter2.lpFilter(dosRead.audio, dosRead.sampleRate, 200);
 
 
         // Resample audio data and apply a threshold to output only 0 & 1
@@ -373,7 +372,8 @@ public class DosRead {
             printIntArray(dosRead.decodedChars);
         }
         listOfSigs.add(dosRead.audio);
-        displaySig(listOfSigs, 0, 5000, "line", "Signal audio");
+        displaySig(listOfSigs, 0, 3000, "line", "Signal audio");
+        
 
         // Close the file input stream
         try {

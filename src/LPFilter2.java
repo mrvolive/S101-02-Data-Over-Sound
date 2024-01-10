@@ -1,26 +1,25 @@
-
 public class LPFilter2 {
-     /**
-     * Apply an Exponential Moving Average Low-Pass Filter to the audio signal.
-     * 
-     * @param cutOffFrequency The smoothing factor used in the EMA, between 0 and 1. A smaller value means more smoothing (lower cutoff frequency).
+    /**
+     * Applies a low-pass filter to the input signal. Exponential Moving Average (EMA).
+     *
+     * @param inputSignal The input signal array.
+     * @param sampleFreq  The sampling frequency of the input signal.
+     * @param cutoffFreq  The cutoff frequency of the low-pass filter.
+     * @return The filtered signal array.
      */
-     public double[] lpFilter(double[] inputSignal,double sampleFreq,double cutoffFreq) {
-        if (inputSignal == null || inputSignal.length == 0) {
-            throw new IllegalStateException("Audio data array is empty.");
-        }
-        if (cutoffFreq < 0 || cutoffFreq > 1) {
-            throw new IllegalArgumentException("cutoffFreq should be between 0 and 1.");
-        }
-        double[] filteredAudio = new double[inputSignal.length];
-        // Start with the first value as the initial condition for the filtered signal.
-        filteredAudio[0] = inputSignal[0];
-        // Apply the Exponential Moving Average filter to the rest of the audio samples.
+    public double[] lpFilter(double[] inputSignal, double sampleFreq, double cutoffFreq) {
+        double rc = 1.0 / (cutoffFreq * 2 * Math.PI);
+        double dt = 1.0 / sampleFreq;
+        double alpha = dt / (rc + dt);
+        
+        double[] outputSignal = new double[inputSignal.length];
+        outputSignal[0] = inputSignal[0];
+        
         for (int i = 1; i < inputSignal.length; i++) {
-            // EMA formula: filteredValue = cutOffFrequency * currentValue + (1 - cutOffFrequency) * previousFilteredValue
-            filteredAudio[i] = cutoffFreq * inputSignal[i] + (1 - cutoffFreq) * filteredAudio[i - 1];
+            // Apply the low-pass filter: discrete implementation of RC low-pass filter
+            outputSignal[i] = outputSignal[i - 1] + alpha * (inputSignal[i] - outputSignal[i - 1]);
         }
-        // Replace the original audio array with the filtered one.
-        return filteredAudio;
+        
+        return outputSignal;
     }
 }

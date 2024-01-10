@@ -1,1 +1,65 @@
 \chapter{Results}
+
+\section{Speed}
+
+\subsection{Values}
+
+\begin{itemize}
+	\item : 1000 = 0 0 = 1
+
+\end{itemize}
+
+\subsection{LPFilter1's Speed}
+
+\subsubsection{Short File}
+
+\subsubsection{Medium File}
+
+\subsubsection{Long File}
+
+\subsection{LPFilter2's Speed}
+
+\subsubsection{Short File}
+
+\subsubsection{Medium File}
+
+\subsubsection{Long File}
+
+\section{Accuracy}
+
+\subsection{LPFilter1's Accuracy}
+
+\subsubsection{Low n}
+% Value sent in cut off frequency is the number of points to average
+% Lower n means less filtering
+
+\subsubsection{High n}
+% Value sent in cut off frequency is the number of points to average
+% Higher n means more filtering
+
+\subsection{LPFilter2's Accuracy}
+
+\subsubsection{Low}
+% Lowering the cutoff frequency means averaging from less points
+% Lower value means more filtering
+
+\subsubsection{high}
+% Upping the cutoff frequency means averaging from more points
+% Higher value means less filtering
+
+On the first plot, we have the input that is going into the moving average filter. The input is noisy
+and our objective is to reduce the noise. The next figure is the output response of a 3-point
+Moving Average filter. It can be deduced from the figure that the 3-point Moving Average filter
+has not done much in filtering out the noise. We increase the filter taps to 51-points and we can
+see that the noise in the output has reduced a lot, which is depicted in next figure.
+Frequency Response of Moving Average Filters of various lengths
+We increase the taps further to 101 and 501 and we can observe that even-though the noise is
+almost zero, the transitions are blunted out drastically (observe the slope on the either side of the
+signal and compare them with the ideal brick wall transition in our input).
+Frequency Response:
+From the frequency response it can be asserted that the roll-off is very slow and the stop band
+attenuation is not good. Given this stop band attenuation,clearly, the moving average filter
+cannot separate one band of frequencies from another. As we know that a good performance in
+the time domain results in poor performance in the frequency domain, and vice versa. 
+In short, the moving average is an exceptionally good smoothing filter (the action in the time
+domain), but an exceptionally bad low-pass filter (the action in the frequency domain)

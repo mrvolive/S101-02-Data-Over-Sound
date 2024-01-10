@@ -1,3 +1,4 @@
+// Développé par Olivier Maraval (S1-A1) - Groupe 7
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
@@ -260,8 +261,21 @@ public class DosSend {
 
         // Set the pen color and thickness
         StdDraw.setPenRadius(0.005);
+
+        // Dessiner l'axe des abscisses
+        StdDraw.setPenColor(StdDraw.BLACK);
+        StdDraw.setPenRadius(0.005);
+        StdDraw.line(start, 0, stop, 0);
+
+        // Marquer les valeurs temporelles sur l'axe des abscisses
+        int interval = (stop - start) / 10;
+        for (int i = start; i <= stop; i += interval) {
+            StdDraw.text(i, -0.2, String.valueOf(i));
+            StdDraw.line(i, -0.1, i, 0.1);
+        }        
     
         // Draw the signal
+        StdDraw.setPenColor(StdDraw.BOOK_RED);
         for (int i = start; i < stop && i < sig.length - 1; i++) {
             if ("line".equals(mode)) {
                 StdDraw.line(i, sig[i], (double)i + 1, sig[i + 1]);
