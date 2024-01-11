@@ -155,16 +155,20 @@ public class DosRead2 {
         System.out.println("sampleInterval = " + sampleInterval);
 
         // Determine the size of the outputBits array
-        int numOutputBits = audio.length / sampleInterval;
-        outputBits = new int[numOutputBits];
+        int numOutputBits = audio.length / sampleInterval; // There is one bit per sample
+        outputBits = new int[numOutputBits]; 
 
         // Sample the audio at regular intervals and apply threshold
         for (int i = 0; i < numOutputBits; i++) {
             // Find the sample index by skipping the necessary number of samples
+            // offset to take a specific part of the signal
             int sampleIndex = ((i) * sampleInterval)+readingOffset; 
+            
+            // Debug affichage
             if (sampleIndex < 1000)
                 System.out.println("sampleIndex" + i + " = " + sampleIndex);
             sampleIndexList.add(sampleIndex);
+
             // Check if the sample index is within the bounds of the audio array
             if (sampleIndex < audio.length) {
                 // Apply threshold to determine if the bit is 0 or 1
@@ -373,9 +377,14 @@ public class DosRead2 {
         System.out.println("\tData Size: " + dosRead2.dataSize + " bytes");
         // Read the audio data
         dosRead2.readAudioDouble();
+
+        // Keep a copy of the original audio data
         double[] audioOriginal = dosRead2.audio.clone();
+        // Add the original audio data to the list of signals to display
         List<double[]> listOfSigs = new java.util.ArrayList<>();
         listOfSigs.add(audioOriginal);
+
+
         // reverse the negative values
         dosRead2.audioRectifier();
         // apply a low pass filter
@@ -411,7 +420,7 @@ public class DosRead2 {
             printIntArray(dosRead2.decodedChars);
         }
         listOfSigs.add(dosRead2.audio);
-        displaySig(listOfSigs, 221, 265, "line", "Signal audio");
+        displaySig(listOfSigs, 0, 5000, "line", "Signal audio");
         
 
         // Close the file input stream

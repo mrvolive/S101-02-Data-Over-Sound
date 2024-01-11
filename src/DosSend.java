@@ -130,11 +130,11 @@ public class DosSend {
      */
     public void writeNormalizeWavData() { // ? juste ?
         try {
-            for (double sample : dataMod) {
+            for (double sample : dataMod) { // chaque échantillon de dataMod correspond à un bit
                 // Normaliser l'échantillon à l'amplitude maximale
-                int value = (int) (sample * MAX_AMP);
+                int value = (int) (sample * MAX_AMP); // ici, MAX_AMP = 2^7 - 1 = 127 (voir ligne 16) car FMT = 8 soit 8 bits
                 // Écrire l'échantillon dans le flux en little endian
-                writeLittleEndian(value, FMT / 8, outStream);
+                writeLittleEndian(value, FMT / 8, outStream); // Le deuxième paramètre est le nombre d'octets à écrire donc ici 1 par 1
             }
 
         } catch (Exception e) {
@@ -164,10 +164,10 @@ public class DosSend {
      */
     public byte[] charToBits(char[] chars) {
         int tailleChar = chars.length;
-        // For each character the array will be 8 times bigger
+        // For each character the array will be 8 times bigger (1 byte = 8 bits)
         byte[] byteArray = new byte[(tailleChar * 8)+START_SEQ.length];
 
-        // Add the start sequence
+        // Add the start sequence to the array of bytes to send (little endian)
         for (int i = 0; i < START_SEQ.length; i++) {
             byteArray[i] = (byte) START_SEQ[i];
         }
@@ -222,9 +222,12 @@ public class DosSend {
                 double amplitude;
                 if (bits[i] == 1) {
                     // Fade-in brusque sur les bits à 1
+                    // Formule : (j / samplesPerBit) ^ powerFactorIN
                     amplitude = Math.pow(((double)j / samplesPerBit), powerFactorIn);
                 } else if (bits[i] == 0 && bits[i-1] == 1) {
                     // Fade-out doux sur les bits à 0 après un bit à 1
+                    // Formule : ((samplesPerBit - j) / samplesPerBit) ^ powerFactorOUT
+                    // samplesPerBit - j car on veut que l'amplitude soit maximale au début du bit
                     amplitude = Math.pow(((double)(samplesPerBit - j) / samplesPerBit), powerFactorOut);
                 }
                 else {
