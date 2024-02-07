@@ -26,6 +26,8 @@ public class LPFilter1 {
             int count = 0;
 
             // Summing up 'n' samples around the current sample
+            // j is initialized to max(0, i - n/2) to handle edge cases
+            // j is limited to min(inputSignal.length, i + n/2) to handle edge cases
             for (int j = Math.max(0, i - n / 2); j < Math.min(inputSignal.length, i + n / 2); j++) {
                 sum += inputSignal[j];
                 count++;

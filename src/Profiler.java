@@ -1,12 +1,10 @@
 
-import java.util.function.Function;
-
 public class Profiler {
 
     static long globalTime;
 
     static long totalCalls;
-    static void init(){
+    public static void init(){
         globalTime = 0;
         totalCalls = 0;
     }
@@ -20,7 +18,7 @@ public class Profiler {
         void apply(double[] inputSignal, double sampleFreq, double cutoffFreq);
     }
 
-    static void analyse(Double4Consumer oneMethod, double[] inputSignal, double sampleFreq, double cutoffFreq){
+    public static void analyse(Double4Consumer oneMethod, double[] inputSignal, double sampleFreq, double cutoffFreq){
         long start = timestamp();
         oneMethod.apply(inputSignal, sampleFreq, cutoffFreq);
         globalTime += timestamp() - start;
@@ -30,7 +28,7 @@ public class Profiler {
 
 
 
-    static void getGlobalTime(){
+    public static void getGlobalTime(){
         String result;
         double elapsed = globalTime / 1e9;
         String unit = "s";
@@ -41,7 +39,7 @@ public class Profiler {
         result = String.format("%.4g%s elapsed", elapsed, unit);
         System.out.println(result);
     }
-    static void getTotalCalls(){
+    public static void getTotalCalls(){
         System.out.println(totalCalls);
     }
 

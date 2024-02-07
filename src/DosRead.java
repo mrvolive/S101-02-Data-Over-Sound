@@ -1,13 +1,12 @@
+
 /**
  * KHERZA Yahia
  * S1-A1
  * Groupe 7
  */
 
-
 import java.io.*;
 import java.util.List;
-
 
 public class DosRead {
     static final int FP = 1000;
@@ -116,27 +115,6 @@ public class DosRead {
 
     private LPFilter1 lpFilter1 = new LPFilter1();
     private LPFilter2 lpFilter2 = new LPFilter2();
-    // Choix du filtre.
-    public void LPFilter(int n) {
-        double[] filteredAudio = new double[audio.length];
-        // Calculating the average of 'n' samples around each sample
-        for (int i = 0; i < audio.length; i++) {
-            double sum = 0.0;
-            int count = 0;
-
-            // Summing up 'n' samples around the current sample
-            for (int j = Math.max(0, i - n / 2); j < Math.min(audio.length, i + n / 2); j++) {
-                sum += audio[j];
-                count++;
-            }
-            // Calculating the average
-            if(count != 0)
-                filteredAudio[i] = sum / count;
-        }
-        // Replacing the original audio array with the filtered one
-        audio = filteredAudio;
-    
-    }
 
     /**
      * Resample the audio array and apply a threshold
@@ -346,22 +324,19 @@ public class DosRead {
         dosRead.audioRectifier();
         // apply a low pass filter
 
-        // ? Choice of low-pass filter
-        // Default filter
-        dosRead.LPFilter(44);
-
+        
+        // ? Choice of low-pass filter (uncomment the filter you want to use)
         // //---FILTRE 1----
         // Profiler.init();
         // Profiler.analyse(dosRead.lpFilter1::lpFilter, dosRead.audio, dosRead.sampleRate, 10);
         // Profiler.getGlobalTime();
         // dosRead.audio = dosRead.lpFilter1.lpFilter(dosRead.audio, dosRead.sampleRate, 10);
 
-
-        // //---FILTRE 2----
-        // Profiler.init();
-        // Profiler.analyse(dosRead.lpFilter2::lpFilter, dosRead.audio, dosRead.sampleRate, 200);
-        // Profiler.getGlobalTime();
-        // dosRead.audio = dosRead.lpFilter2.lpFilter(dosRead.audio, dosRead.sampleRate, 200);
+        //---FILTRE 2----
+        Profiler.init();
+        Profiler.analyse(dosRead.lpFilter2::lpFilter, dosRead.audio, dosRead.sampleRate, 200);
+        Profiler.getGlobalTime();
+        dosRead.audio = dosRead.lpFilter2.lpFilter(dosRead.audio, dosRead.sampleRate, 200);
 
 
         // Resample audio data and apply a threshold to output only 0 & 1
