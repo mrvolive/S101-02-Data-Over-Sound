@@ -17,3 +17,15 @@ En tant qu'étudiant confronté au projet DosOok, j'ai dû mobiliser et dévelop
 **Travail en équipe :** Le développement en binôme a renforcé mes compétences collaboratives, essentielles pour la réussite d'un projet logiciel.
 
 **Adaptabilité aux normes de codage :** Les contraintes imposées par le professeur sur l'écriture du code source m'ont appris à suivre rigoureusement les normes et standards de codage, un aspect crucial dans le développement professionnel d'applications 
+
+# Amélioration des compétences et apports du projet
+
+**Compétences techniques :** J'ai amélioré ma capacité à coder en Java, à utiliser des outils de développement intégrés (IDE) et à déboguer des programmes complexes.
+
+**Analyse et résolution de problèmes :** J'ai développé une approche méthodique pour résoudre des problèmes algorithmiques et pour optimiser les performances du code.
+
+**Gestion de projet :** J'ai appris à planifier efficacement mon travail, à gérer mon temps et à respecter les échéances, compétences essentielles que je pourrai appliquer dans ma future carrière professionnelle.
+
+**Travail collaboratif :** Ce projet m'a enseigné l'importance de la collaboration et de la communication au sein d'une équipe pour atteindre un objectif commun.
+
+**Conformité aux normes :** J'ai compris l'importance de suivre les directives de codage et de documentation pour assurer la maintenabilité et la lisibilité du code.
